@@ -83,9 +83,18 @@ WRITTEN = [t for t in TEMPLATES if t.category == "written"]
 
 
 def test_written_inventory():
-    assert len(WRITTEN) == 25
-    assert Counter(t.level for t in WRITTEN) == {1: 5, 2: 5, 3: 5, 4: 5, 5: 5}
-    assert {t.chapter for t in WRITTEN} == {8}
+    chapters = {t.chapter for t in WRITTEN}
+    assert chapters >= {6, 7, 8}
+    for ch in chapters:
+        assert Counter(t.level for t in WRITTEN if t.chapter == ch) == {1: 5, 2: 5, 3: 5, 4: 5, 5: 5}, f"chapter {ch}"
+    assert len(WRITTEN) == 25 * len(chapters)
+
+
+def test_no_fill_in_the_blank_hints():
+    for t in TEMPLATES:
+        q = t.make(0)
+        for h in q.hints:
+            assert "___" not in h, f"{t.id}: cloze hint {h!r}"
 
 
 @pytest.mark.parametrize("tpl", WRITTEN, ids=lambda t: t.id)

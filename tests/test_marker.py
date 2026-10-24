@@ -33,6 +33,14 @@ def test_min_points_and_short_answers():
     assert not mark("", [Point("c", ["conduction"])]).passed
 
 
+def test_negated_pitfall_is_not_flagged():
+    pits = [Pitfall(["energy is destroyed", "energy is lost"], "no")]
+    pts = [Point("p", ["thermal"])]
+    assert mark("energy is not destroyed, it becomes thermal", pts, pits).passed
+    assert mark("energy is never lost, it becomes thermal", pts, pits).passed
+    assert not mark("energy is destroyed and becomes thermal", pts, pits).passed
+
+
 def test_physics_near_homographs_are_kept_apart():
     assert not phrase_match(tokens("conduction"), "convection")
     assert not phrase_match(tokens("convection"), "conduction")

@@ -75,10 +75,13 @@ def template(id: str, chapter: int, level: int, lo: str, category: str = "calc")
 def written(id: str, chapter: int, level: int, lo: str, stem: str, points, model_answer: str, hints, keywords: str,
             pitfalls=(), min_points: Optional[int] = None, figure: Optional[Callable[[], bytes]] = None,
             sample_pass=(), sample_fail=()):
-    """Register a written-answer question (fixed text; marked by trainer.marker)."""
+    """Register a written-answer question (fixed text; marked by trainer.marker).
+    Teacher rule: no fill-in-the-blank prompts. A hint written with gaps is replaced by a prompt to write a full sentence."""
+    clean_hints = [h if "___" not in h else f"Write one or two full sentences of your own that use these ideas: {keywords}." for h in hints]
+
     def make(seed: int) -> Question:
         return Question(template_id=id, category="written", chapter=chapter, level=level, seed=seed, lo=lo, stem=stem,
-                        options={}, key="", working=[f"**Model answer:** {model_answer}"], hints=list(hints), misconceptions={},
+                        options={}, key="", working=[f"**Model answer:** {model_answer}"], hints=list(clean_hints), misconceptions={},
                         formula=keywords, figure=figure() if figure else None, kind="written", points=list(points),
                         pitfalls=list(pitfalls), model_answer=model_answer, min_points=min_points,
                         samples=(list(sample_pass), list(sample_fail)))

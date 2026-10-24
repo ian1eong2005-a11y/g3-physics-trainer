@@ -14,6 +14,8 @@ from typing import List, Optional, Sequence
 STOP = set("the a an of to and is are in on at by it its this that as be from with for into than so which who what there their "
            "they them then will would can could has have had was were been being do does did also very more most much".split())
 
+NEGATIONS = {"not", "never", "no", "cannot", "without", "isn", "aren", "doesn", "don", "wasn", "weren", "won", "nor", "neither"}
+
 WINDOW = 9          # max token span for the words of one phrase (order-free)
 PITFALL_WINDOW = 4  # tight, ordered
 
@@ -116,7 +118,10 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
                     break
                 cur = min(nxt)
             if ok:
-                return True
+                # a negated phrase ("energy is NOT destroyed") is not the pitfall
+                span = ans[max(0, start - 2): cur + 1]
+                if not any(t in NEGATIONS for t in span):
+                    return True
         else:
             if all(any(abs(i - start) <= window for i in p) for p in pos[1:]):
                 return True

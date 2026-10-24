@@ -359,7 +359,8 @@ def _register(item):
     def make(rng, item=item):
         opts, key, mis = text_options(rng, item["correct"], item["wrongs"])
         fig = item.get("figure")
-        return dict(stem=item["stem"], options=opts, key=key, misconceptions=mis, hints=item["hints"],
+        hints = [h if "___" not in h else "Rule out the options that contradict what you know, then choose the one that matches the definition exactly." for h in item["hints"]]
+        return dict(stem=item["stem"], options=opts, key=key, misconceptions=mis, hints=hints,
                     working=[f"Correct statement: **{item['correct']}**"], formula=None, figure=fig() if fig else None)
 
 
