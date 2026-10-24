@@ -9,7 +9,7 @@ PF = Pitfall
 # ---------------------------------------------------------------- L1
 written("w10_speed_in_vacuum", 10, 1, "10a",
         stem="State the speed of electromagnetic waves in a vacuum.",
-        points=[P("3 × 10⁸ m/s (300 000 000 m/s)", ["3 × 10", "3 x 10", "3x10", "300 000 000", "300000000", "300 million", "3e8", "speed of light"])],
+        points=[P("3 × 10⁸ m/s (300 000 000 m/s)", ["3 × 10", "3 x 10", "3x10", "3 × 10^8", "3 x 10^8", "3x10^8", "300 000 000", "300000000", "300 million", "3e8", "speed of light"])],
         pitfalls=[PF(["340"], "340 m/s is the speed of SOUND in air. Electromagnetic waves travel about a million times faster.")],
         model_answer="3 × 10⁸ m/s (300 000 000 m/s), the speed of light.",
         hints=["All electromagnetic waves, including light, travel at this speed in empty space.",

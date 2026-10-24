@@ -9,7 +9,7 @@ Waves, Electromagnetic Spectrum). Streamlit app, no database.
 - Students log in with **name + class** (no password). Teacher view is password protected.
 - Three categories: **Calculation** (73 parametrised templates, L1–L5, numbers change every time, every one with a diagram or data
   table drawn to match), **Explanation** (57 recall / identify / apply MCQs at L1–L3, many with diagrams) and **Written answer**
-  (25 questions for Ch 8 Thermal Processes, 5 per level). Chapters 7 and 8 are descriptive in the syllabus, so they appear under
+  (250 questions: 25 per chapter for Ch 1–10, 5 per level). Chapters 7 and 8 are descriptive in the syllabus, so they appear under
   Explanation and Written answer only.
 - **Written answers are marked by meaning, not word for word** (`trainer/marker.py`, no LLM): each question has marking points with
   many alternative phrasings; words match after light stemming with one spelling slip allowed, phrase words may appear in any order
@@ -76,7 +76,7 @@ trainer/store.py            in-memory live store shared by all sessions
 trainer/figs.py             instrument and graph drawers (micrometer, vernier, stopwatch, cylinders, force diagrams, graphs, blocks)
 trainer/sketches.py         scene sketches (motion, journeys, beams, slopes, lifts, waves, echo, wavefronts, EM spectrum, particles, thermal)
 trainer/marker.py           meaning-based marker for written answers (marking points, synonyms, spelling tolerance, pitfalls)
-trainer/content/            question templates (base helpers, calc_ch1..6, calc_ch9, calc_ch10, recall, recall2, written_ch8)
+trainer/content/            question templates (base helpers, calc_ch1..6, calc_ch9, calc_ch10, recall, recall2, written_ch1..10)
 trainer/ui_student.py       student screen + tutor panel
 trainer/ui_teacher.py       live dashboard
 tests/                      pytest

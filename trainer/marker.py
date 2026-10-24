@@ -70,7 +70,7 @@ def tokens(text: str) -> List[str]:
     ('÷' and a digit-digit '/' -> '/', '×' and 'x' between numbers -> '*', '−' -> '-'), so 'm/s' and 'm/s²' differ and
     '12 × 4' does not match '12 ÷ 4'."""
     text = text.lower().replace("'", " ").replace("’", " ")
-    text = text.replace("²", "2").replace("³", "3").replace("⁻", "-")
+    text = text.replace("²", "2").replace("³", "3").replace("⁻", "-").replace("^", "")   # m/s^2 -> m/s2
     text = text.replace("÷", " / ").replace("×", " * ").replace("−", " - ").replace("=", " = ")
     text = re.sub(r"(?<=\d)\s*/\s*(?=\d)", " / ", text)          # 12/4 -> 12 / 4   (m/s stays one token)
     text = re.sub(r"(?<=\d)\s*x\s*(?=\d)", " * ", text)          # 12x4, 12 x 4 -> 12 * 4
@@ -119,12 +119,22 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
     words = tokens(phrase) if exact else [w for w in tokens(phrase) if w not in STOP]   # pitfalls keep every word ('more dense')
     if not words:
         return False
+    negated_phrase = any(w in NEGATIONS for w in words)
+    if negated_phrase and not ordered:
+        ordered, window = True, min(window, 4)        # 'not accurate' must read in order, close together
     pos = [_positions(ans, w, exact) for w in words]
     if any(not p for p in pos):
         return False
+
+    def negated_before(i):
+        # a positive phrase does not count when the answer negates it: 'not precise', 'is never destroyed'
+        return (not negated_phrase) and any(t in NEGATIONS for t in ans[max(0, i - 2): i])
+
     if len(words) == 1:
-        return True
+        return any(not negated_before(i) for i in pos[0])
     for start in pos[0]:
+        if negated_before(start):
+            continue
         if ordered:
             cur = start
             ok = True
@@ -135,9 +145,10 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
                     break
                 cur = min(nxt)
             if ok:
-                # a negated phrase ("energy is NOT destroyed") is not the pitfall
+                # a positive phrase that the answer negates ("energy is NOT destroyed") does not count;
+                # a phrase that is itself negative ("no net transfer") is matched as written
                 span = ans[max(0, start - 2): cur + 1]
-                if not any(t in NEGATIONS for t in span):
+                if negated_phrase or not any(t in NEGATIONS for t in span):
                     return True
         else:
             if all(any(abs(i - start) <= window for i in p) for p in pos[1:]):
