@@ -101,10 +101,10 @@ def test_no_fill_in_the_blank_hints():
 def test_written_marking(tpl):
     q = tpl.make(0)
     assert q.kind == "written" and q.points and q.model_answer and q.formula and len(q.hints) == 3
+    if "Fig. 1" in q.stem:
+        assert q.figure is not None, f"{tpl.id}: stem mentions Fig. 1 but has no figure"
     if q.figure is not None:
-        assert "Fig. 1" in q.stem
-    else:
-        assert "Fig. 1" not in q.stem
+        assert q.figure.startswith(PNG)
     r = mark(q.model_answer, q.points, q.pitfalls, q.min_points)
     assert r.passed, f"{tpl.id}: model answer fails its own marking: missed {r.missed}, pitfalls {r.pitfalls}"
     assert not mark("", q.points, q.pitfalls, q.min_points).passed

@@ -12,7 +12,8 @@ from difflib import SequenceMatcher
 from typing import List, Optional, Sequence
 
 STOP = set("the a an of to and is are in on at by it its this that as be from with for into than so which who what there their "
-           "they them then will would can could has have had was were been being do does did also very more most much".split())
+           "they them then will would can could has have had was were been being do does did also very".split())
+# 'more', 'less', 'not', 'no' are deliberately NOT stop words: comparatives and negations carry physics meaning.
 
 NEGATIONS = {"not", "never", "no", "cannot", "without", "isn", "aren", "doesn", "don", "wasn", "weren", "won", "nor", "neither"}
 
@@ -25,6 +26,8 @@ class Point:
     label: str                       # shown to the student when hit / missed, e.g. "says energy goes from hot to cold"
     any_of: Sequence[str]            # alternative phrasings; one matching phrase scores the point
     required: bool = True
+    ordered: bool = False            # True: phrase words must appear in order (for "P is microwaves"-type pairings)
+    window: Optional[int] = None     # max token span for a phrase (default WINDOW)
 
 
 @dataclass
@@ -53,6 +56,8 @@ def _stem(w: str) -> str:
         return w
     for suf in ("ingly", "ing", "edly", "ed", "ies", "es", "ly", "s"):
         if w.endswith(suf) and len(w) - len(suf) >= 3:
+            if suf == "es" and not (w[-3] in "sxz" or w.endswith(("ches", "shes"))):
+                continue                      # 'bones', 'waves' -> strip only the 's'
             w = w[: -len(suf)]
             break
     if w.endswith("e") and len(w) > 4:
@@ -61,9 +66,21 @@ def _stem(w: str) -> str:
 
 
 def tokens(text: str) -> List[str]:
+    """Lower-case word tokens. Superscripts become digits ('m/s²' -> 'm/s2'), arithmetic operators become their own tokens
+    ('÷' and a digit-digit '/' -> '/', '×' and 'x' between numbers -> '*', '−' -> '-'), so 'm/s' and 'm/s²' differ and
+    '12 × 4' does not match '12 ÷ 4'."""
     text = text.lower().replace("'", " ").replace("’", " ")
-    text = re.sub(r"[^a-z0-9°/\-]+", " ", text)
-    return [t for t in text.split() if t]
+    text = text.replace("²", "2").replace("³", "3").replace("⁻", "-")
+    text = text.replace("÷", " / ").replace("×", " * ").replace("−", " - ").replace("=", " = ")
+    text = re.sub(r"(?<=\d)\s*/\s*(?=\d)", " / ", text)          # 12/4 -> 12 / 4   (m/s stays one token)
+    text = re.sub(r"(?<=\d)\s*x\s*(?=\d)", " * ", text)          # 12x4, 12 x 4 -> 12 * 4
+    text = re.sub(r"[^a-z0-9°/\-*=.]+", " ", text)
+    out = []
+    for t in text.split():
+        t = t.strip(".")
+        if t:
+            out.append(t)
+    return out
 
 
 def _edits(a: str, b: str) -> int:
@@ -85,7 +102,7 @@ def _word_match(a: str, b: str, exact: bool = False) -> bool:
     if a == b:
         return True
     sa, sb = _stem(a), _stem(b)
-    if sa == sb:
+    if sa == sb or sa == b or a == sb:        # 'sunbeds' -> 'sunbed' matches the phrase word 'sunbed' even though it stems to 'sunb'
         return True
     if exact or len(sa) < 5 or len(sb) < 5:
         return False
@@ -133,7 +150,8 @@ def mark(answer: str, points: Sequence[Point], pitfalls: Sequence[Pitfall] = (),
     ans = tokens(answer)
     hit, missed = [], []
     for p in points:
-        (hit if any(phrase_match(ans, ph) for ph in p.any_of) else missed).append(p.label)
+        ok = any(phrase_match(ans, ph, ordered=p.ordered, window=p.window or WINDOW) for ph in p.any_of)
+        (hit if ok else missed).append(p.label)
     found = [pf.message for pf in pitfalls if any(phrase_match(ans, ph, ordered=True, window=PITFALL_WINDOW, exact=True) for ph in pf.phrases)]
     needed = len(points) if min_points is None else min(min_points, len(points))
     too_short = len(ans) == 0 or (len(ans) < 3 and needed > 1)   # a one-word answer is fine for a 'name the process' question

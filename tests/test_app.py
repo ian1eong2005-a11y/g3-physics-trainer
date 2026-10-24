@@ -120,7 +120,7 @@ def test_written_answer_flow(at):
     login(at, name="Ella Goh")
     at.radio[0].set_value("written"); at.run()
     q = current_question(at)
-    assert q.kind == "written" and q.chapter == 8 and q.level == 1
+    assert q.kind == "written" and q.level == 1
     # a weak answer -> tutor opens with marking feedback
     at.text_area[0].input("something about heat"); at.run()
     next(b for b in at.button if b.label == "Submit answer").click(); at.run()

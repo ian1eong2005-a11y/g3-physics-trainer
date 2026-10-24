@@ -1,5 +1,5 @@
 """Question content registry. Importing the chapter modules registers their templates."""
-from . import calc_ch1, calc_ch2, calc_ch3, calc_ch4, calc_ch5, calc_ch6, calc_ch9, calc_ch10, recall, recall2, written_ch6, written_ch7, written_ch8  # noqa: F401
+from . import calc_ch1, calc_ch2, calc_ch3, calc_ch4, calc_ch5, calc_ch6, calc_ch9, calc_ch10, recall, recall2, written_ch6, written_ch7, written_ch8, written_ch9, written_ch10  # noqa: F401
 from .base import TEMPLATES, Question, Template
 
 
