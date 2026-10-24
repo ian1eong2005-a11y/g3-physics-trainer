@@ -8,13 +8,20 @@ import streamlit as st
 from .config import CATEGORIES, CHAPTERS, CLASS_LIST, DASHBOARD_REFRESH_S, DEFAULT_TEACHER_PASSWORD, MAX_LEVEL
 
 
-def teacher_password() -> str:
+def _password_and_source():
+    """(password, where it came from): 'secret' (Streamlit secrets), 'env' or 'default'."""
     try:
         if "TEACHER_PASSWORD" in st.secrets:
-            return str(st.secrets["TEACHER_PASSWORD"])
+            return str(st.secrets["TEACHER_PASSWORD"]), "secret"
     except Exception:
         pass
-    return os.environ.get("TEACHER_PASSWORD", DEFAULT_TEACHER_PASSWORD)
+    if os.environ.get("TEACHER_PASSWORD"):
+        return os.environ["TEACHER_PASSWORD"], "env"
+    return DEFAULT_TEACHER_PASSWORD, "default"
+
+
+def teacher_password() -> str:
+    return _password_and_source()[0]
 
 
 def render_teacher(store):
@@ -28,7 +35,7 @@ def render_teacher(store):
                     st.rerun()
                 else:
                     st.error("Wrong password.")
-        if teacher_password() == DEFAULT_TEACHER_PASSWORD:
+        if _password_and_source()[1] == "default":
             st.caption("No TEACHER_PASSWORD secret is set, so the default local password applies. Set one in Streamlit Cloud → Secrets before use with students.")
         return
 
