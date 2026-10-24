@@ -5,7 +5,7 @@ import time
 import streamlit as st
 
 from .config import CATEGORIES, CHAPTERS, DOWN_STREAK, EXPLAIN_LEVEL_NAMES, LEVEL_NAMES, UP_STREAK
-from .content import TEMPLATES
+from .content import TEMPLATES, chapters_with_content
 from .engine import apply_first_attempt, levels_available, repeat_until_correct, select_template
 from .store import Attempt
 
@@ -90,11 +90,17 @@ def render_student(store, rec):
     if cat != ss.get("category"):
         ss["category"] = cat
         ss.pop("qs", None)
+    available = chapters_with_content(cat)
     with st.expander("Chapters", expanded=False):
-        chapters = st.multiselect("Practise these chapters", list(CHAPTERS), default=ss.get("chapters", list(CHAPTERS)),
-                                  format_func=lambda c: f"Ch {c} {CHAPTERS[c]}", key="chapters_ms")
+        default = [c for c in ss.get("chapters", available) if c in available] or available
+        chapters = st.multiselect("Practise these chapters", available, default=default,
+                                  format_func=lambda c: f"Ch {c} {CHAPTERS[c]}", key=f"chapters_ms_{cat}")
+        missing = [c for c in CHAPTERS if c not in available]
+        if missing:
+            st.caption("No " + CATEGORIES[cat].lower() + " questions for: " + ", ".join(f"Ch {c}" for c in missing)
+                       + (". Chapters 7 and 8 are descriptive in the syllabus; try them under Explanation." if cat == "calc" else "."))
     if not chapters:
-        chapters = list(CHAPTERS)
+        chapters = available
     if chapters != ss.get("chapters"):
         ss["chapters"] = chapters
         ss.pop("qs", None)

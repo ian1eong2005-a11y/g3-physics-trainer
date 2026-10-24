@@ -1,5 +1,5 @@
 """Chapter 2 Kinematics: speed, acceleration, graphs."""
-from .. import figs
+from .. import figs, sketches
 from ..config import G
 from .base import fmt, md_table, nice, numeric_options, template
 
@@ -27,7 +27,8 @@ def speed_from_distance_time(rng):
         (d / t / 60, "You divided by 60 as well. The time is already in seconds."),
     ], unit="m/s")
     return dict(
-        stem=f"A cyclist travels **{fmt(d)} m in {t} s**. What is the average speed of the cyclist?",
+        stem=f"Fig. 1 shows a car that travels **{fmt(d)} m in {t} s**. What is the average speed of the car?",
+        figure=sketches.motion_sketch("start", "finish", f"{fmt(d)} m in {t} s"),
         options=opts, key=key, misconceptions=mis,
         formula="average speed = distance travelled ÷ time taken",
         working=["average speed = distance ÷ time", f"= {fmt(d)} ÷ {t}", f"= **{fmt(v)} m/s**"],
@@ -51,7 +52,8 @@ def acceleration_from_speeds(rng):
     wrongs.append((t / (v - u), "You divided time by the change in speed, the wrong way round."))
     opts, key, mis = numeric_options(rng, a, wrongs, unit="m/s²")
     return dict(
-        stem=f"A car's speed increases uniformly from **{fmt(u)} m/s to {fmt(v)} m/s in {fmt(t)} s**. What is the acceleration of the car?",
+        stem=f"Fig. 1 shows a car whose speed increases uniformly from **{fmt(u)} m/s to {fmt(v)} m/s in {fmt(t)} s**. What is the acceleration of the car?",
+        figure=sketches.motion_sketch(f"u = {fmt(u)} m/s", f"v = {fmt(v)} m/s", f"t = {fmt(t)} s"),
         options=opts, key=key, misconceptions=mis,
         formula="acceleration = change in velocity ÷ time taken = (v − u) ÷ t",
         working=["acceleration = (v − u) ÷ t", f"= ({fmt(v)} − {fmt(u)}) ÷ {fmt(t)}", f"= **{fmt(a)} m/s²**"],
@@ -72,7 +74,8 @@ def distance_from_speed_time(rng):
         (v + t, "You added the numbers. Distance = speed × time."),
     ], unit="m")
     return dict(
-        stem=f"A car travels at a constant speed of **{fmt(v)} m/s for {t} s**. What distance does it travel in this time?",
+        stem=f"Fig. 1 shows a car travelling at a constant speed of **{fmt(v)} m/s for {t} s**. What distance does it travel in this time?",
+        figure=sketches.motion_sketch(f"{fmt(v)} m/s", f"{fmt(v)} m/s", f"t = {t} s,  distance = ?"),
         options=opts, key=key, misconceptions=mis,
         formula="distance = speed × time",
         working=["distance = speed × time", f"= {fmt(v)} × {t}", f"= **{fmt(d)} m**"],
@@ -95,7 +98,8 @@ def kmh_distance(rng):
         (v, "That is the speed in m/s. You still need to multiply by the time."),
     ], unit="m")
     return dict(
-        stem=f"A train travels at a constant speed of **{v_kmh} km/h**. How far does it travel in **{t} s**?",
+        stem=f"Fig. 1 shows a train travelling at a constant speed of **{v_kmh} km/h**. How far does it travel in **{t} s**?",
+        figure=sketches.motion_sketch(f"{v_kmh} km/h", f"{v_kmh} km/h", f"t = {t} s,  distance = ?", body="box"),
         options=opts, key=key, misconceptions=mis,
         formula="distance = speed × time, with speed in m/s (km/h × 1000 ÷ 3600)",
         working=[f"{v_kmh} km/h = {v_kmh} × 1000 ÷ 3600 = {fmt(v)} m/s", f"distance = {fmt(v)} × {t}", f"= **{fmt(d)} m**"],
@@ -122,7 +126,8 @@ def distance_after_acceleration(rng):
         wrongs.append((a * t * t, "You forgot the ½. Distance = ½ × final speed × time when starting from rest."))
     opts, key, mis = numeric_options(rng, s, wrongs, unit="m")
     return dict(
-        stem=f"A car accelerates uniformly from **{fmt(u)} m/s** at **{fmt(a)} m/s²** for **{t} s**. How far does it travel during this time?",
+        stem=f"Fig. 1 shows a car that accelerates uniformly from **{fmt(u)} m/s** at **{fmt(a)} m/s²** for **{t} s**. How far does it travel during this time?",
+        figure=sketches.motion_sketch(f"u = {fmt(u)} m/s", f"after {t} s", f"a = {fmt(a)} m/s²,  distance = ?"),
         options=opts, key=key, misconceptions=mis,
         formula="v = u + at, then distance = average speed × time = ½(u + v) × t",
         working=[f"final speed v = u + at = {fmt(u)} + {fmt(a)} × {t} = {fmt(v)} m/s",
@@ -306,7 +311,8 @@ def two_stage_average_speed(rng):
         (max(v1, v2), "That is the faster of the two speeds, not the average."),
     ], unit="m/s")
     return dict(
-        stem=f"A delivery robot travels **{fmt(d1)} m at a constant speed of {fmt(v1)} m/s**, then immediately travels a further **{fmt(d2)} m at a constant speed of {fmt(v2)} m/s**. What is its average speed for the whole journey?",
+        stem=f"Fig. 1 shows the journey of a delivery robot. It travels **{fmt(d1)} m at a constant speed of {fmt(v1)} m/s**, then immediately a further **{fmt(d2)} m at {fmt(v2)} m/s**. What is its average speed for the whole journey?",
+        figure=sketches.journey_sketch([(f"{fmt(d1)} m", f"{fmt(v1)} m/s"), (f"{fmt(d2)} m", f"{fmt(v2)} m/s")]),
         options=opts, key=key, misconceptions=mis,
         formula="average speed = total distance ÷ total time (find the time for each part first)",
         working=[f"time for part 1 = {fmt(d1)} ÷ {fmt(v1)} = {fmt(t1)} s; time for part 2 = {fmt(d2)} ÷ {fmt(v2)} = {fmt(t2)} s",

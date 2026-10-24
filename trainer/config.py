@@ -15,6 +15,12 @@ CHAPTERS = {
     2: "Kinematics",
     3: "Force and Pressure",
     4: "Dynamics",
+    5: "Turning Effects of Forces",
+    6: "Energy",
+    7: "Kinetic Particle Model of Matter",
+    8: "Thermal Processes",
+    9: "General Wave Properties",
+    10: "Electromagnetic Spectrum",
 }
 
 CATEGORIES = {

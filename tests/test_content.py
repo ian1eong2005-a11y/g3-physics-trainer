@@ -1,11 +1,13 @@
-"""Every template x 20 seeds: well-formed question, four distinct options, key present, hints, PNG figure iff 'Fig. 1' in stem."""
+"""Every template x 20 seeds: well-formed question, four distinct options, key present, hints, a PNG figure or a data table,
+and 'Fig. 1' in the stem exactly when there is a figure."""
 import random
 from collections import Counter
 
 import pytest
 
-from trainer.content import TEMPLATES
+from trainer.content import TEMPLATES, inventory
 from trainer.content.recall import RECALL
+from trainer.content.recall2 import RECALL2
 
 PNG = b"\x89PNG\r\n\x1a\n"
 SEEDS = list(range(20))
@@ -14,13 +16,16 @@ SEEDS = list(range(20))
 def test_inventory():
     calc = [t for t in TEMPLATES if t.category == "calc"]
     expl = [t for t in TEMPLATES if t.category == "explain"]
-    assert len(calc) == 40
-    assert Counter(t.level for t in calc) == {1: 8, 2: 8, 3: 8, 4: 8, 5: 8}
-    assert {t.chapter for t in calc} == {1, 2, 3, 4}
-    assert len(expl) == len(RECALL) >= 20
-    assert {t.level for t in expl} == {1, 2}
+    assert len(calc) >= 70
+    levels = Counter(t.level for t in calc)
+    assert set(levels) == {1, 2, 3, 4, 5} and min(levels.values()) >= 8
+    assert {t.chapter for t in calc} == {1, 2, 3, 4, 5, 6, 9, 10}
+    assert len(expl) == len(RECALL) + len(RECALL2) >= 50
+    assert {t.chapter for t in expl} == set(range(1, 11))
     ids = [t.id for t in TEMPLATES]
     assert len(ids) == len(set(ids)), "duplicate template ids"
+    inv = inventory()
+    assert ("calc", 5) in inv and ("explain", 8) in inv
 
 
 @pytest.mark.parametrize("tpl", TEMPLATES, ids=lambda t: t.id)
@@ -45,6 +50,7 @@ def test_template_well_formed(tpl):
             assert "Fig. 1" not in q.stem
         if q.category == "calc":
             assert q.formula
+            assert q.figure is not None or "|" in q.stem, f"{tpl.id}: every calculation question needs a diagram or a data table"
 
 
 def test_numbers_vary_between_seeds():

@@ -1,5 +1,5 @@
 """Chapter 1 Measurement: calculation templates (period, instrument readings, displacement, unit conversion)."""
-from .. import figs
+from .. import figs, sketches
 from .base import fmt, nice, numeric_options, template
 
 
@@ -15,7 +15,8 @@ def period_from_oscillations(rng):
         (total, "That is the total time for all the oscillations, not the time for one."),
     ], unit="s")
     return dict(
-        stem=f"A student times a pendulum and finds that it completes **{n} oscillations in {fmt(total)} s**. What is the period of the pendulum?",
+        stem=f"A student times the pendulum shown in Fig. 1 and finds that it completes **{n} oscillations in {fmt(total)} s**. What is the period of the pendulum?",
+        figure=sketches.pendulum_sketch(f"{n} complete oscillations in {fmt(total)} s"),
         options=opts, key=key, misconceptions=mis,
         formula="period = total time ÷ number of oscillations",
         working=[f"period = total time ÷ number of oscillations", f"= {fmt(total)} s ÷ {n}", f"= **{fmt(T)} s**"],
@@ -145,7 +146,8 @@ def density_mixed_units(rng):
         (rho * 1e6, "You left the mass in grams. 1 kg = 1000 g."),
     ], unit="kg/m³")
     return dict(
-        stem=f"A metal block has a mass of **{fmt(mass_kg, sf=4)} kg** and a volume of **{V} cm³**. What is the density of the metal in **kg/m³**?",
+        stem=f"Fig. 1 shows a metal block of mass **{fmt(mass_kg, sf=4)} kg** and volume **{V} cm³**. What is the density of the metal in **kg/m³**?",
+        figure=sketches.lump_sketch([f"mass = {fmt(mass_kg, sf=4)} kg", f"volume = {V} cm³"]),
         options=opts, key=key, misconceptions=mis,
         formula="density = mass ÷ volume, with mass in kg and volume in m³ (1 m³ = 1 000 000 cm³)",
         working=[f"volume = {V} cm³ = {V} ÷ 1 000 000 m³ = {fmt(V / 1e6, sf=4)} m³",

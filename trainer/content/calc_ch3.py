@@ -1,5 +1,5 @@
 """Chapter 3 Force and Pressure: weight, density, pressure."""
-from .. import figs
+from .. import figs, sketches
 from ..config import G
 from .base import fmt, nice, numeric_options, template
 
@@ -15,7 +15,8 @@ def weight_from_mass(rng):
         (m * G * 10, "You used g = 100 N/kg. On Earth g = 10 N/kg."),
     ], unit="N")
     return dict(
-        stem=f"A bag of rice has a mass of **{fmt(m)} kg**. Taking the gravitational field strength g = 10 N/kg, what is the weight of the bag?",
+        stem=f"Fig. 1 shows a bag of rice of mass **{fmt(m)} kg** hanging from a spring balance. Taking the gravitational field strength g = 10 N/kg, what is the reading on the balance, i.e. the weight of the bag?",
+        figure=sketches.spring_balance("? N", f"{fmt(m)} kg"),
         options=opts, key=key, misconceptions=mis,
         formula="weight = mass × gravitational field strength (W = mg)",
         working=["W = mg", f"= {fmt(m)} × 10", f"= **{fmt(W)} N**"],
@@ -36,7 +37,8 @@ def density_direct(rng):
         (m / V / 10, "You divided by an extra 10. Check the division."),
     ], unit="g/cm³")
     return dict(
-        stem=f"A piece of metal has a mass of **{fmt(m)} g** and a volume of **{V} cm³**. What is the density of the metal?",
+        stem=f"Fig. 1 shows a piece of metal of mass **{fmt(m)} g** and volume **{V} cm³**. What is the density of the metal?",
+        figure=sketches.lump_sketch([f"mass = {fmt(m)} g", f"volume = {V} cm³"]),
         options=opts, key=key, misconceptions=mis,
         formula="density = mass ÷ volume",
         working=["density = mass ÷ volume", f"= {fmt(m)} ÷ {V}", f"= **{fmt(rho)} g/cm³**"],
@@ -57,7 +59,8 @@ def pressure_direct(rng):
         (F / A / 10, "Check the division: dividing by a decimal makes the answer LARGER than the force."),
     ], unit="Pa")
     return dict(
-        stem=f"A force of **{F} N** acts at right angles on a surface of area **{fmt(A)} m²**. What is the pressure on the surface?",
+        stem=f"Fig. 1 shows a force of **{F} N** acting at right angles on a block whose base has an area of **{fmt(A)} m²**. What is the pressure the block exerts on the floor due to this force?",
+        figure=sketches.pressure_block(f"F = {F} N", f"area of base = {fmt(A)} m²"),
         options=opts, key=key, misconceptions=mis,
         formula="pressure = force ÷ area (p = F/A)",
         working=["p = F ÷ A", f"= {F} ÷ {fmt(A)}", f"= **{fmt(p)} Pa**"],
@@ -78,7 +81,8 @@ def mass_from_weight(rng):
         (W - G, "You subtracted g. Rearrange W = mg to get m = W ÷ g."),
     ], unit="kg")
     return dict(
-        stem=f"An object has a weight of **{fmt(W)} N** on Earth, where g = 10 N/kg. What is the mass of the object?",
+        stem=f"Fig. 1 shows an object hanging from a spring balance on Earth, where g = 10 N/kg. The balance reads **{fmt(W)} N**. What is the mass of the object?",
+        figure=sketches.spring_balance(f"{fmt(W)} N", "mass = ?"),
         options=opts, key=key, misconceptions=mis,
         formula="W = mg, rearranged: m = W ÷ g",
         working=["W = mg  →  m = W ÷ g", f"= {fmt(W)} ÷ 10", f"= **{fmt(m)} kg**"],
@@ -100,7 +104,8 @@ def pressure_area_cm2(rng):
         (F * A_cm2, "You multiplied force by area. Pressure = force ÷ area."),
     ], unit="Pa")
     return dict(
-        stem=f"A force of **{F} N** acts at right angles on a surface of area **{A_cm2} cm²**. What is the pressure on the surface, in pascals?",
+        stem=f"Fig. 1 shows a force of **{F} N** acting at right angles on a block whose base has an area of **{A_cm2} cm²**. What is the pressure on the floor due to this force, in pascals?",
+        figure=sketches.pressure_block(f"F = {F} N", f"area of base = {A_cm2} cm²"),
         options=opts, key=key, misconceptions=mis,
         formula="p = F ÷ A with A in m² (cm² ÷ 10 000)",
         working=[f"A = {A_cm2} cm² = {A_cm2} ÷ 10 000 m² = {fmt(A, sf=4)} m²", f"p = {F} ÷ {fmt(A, sf=4)}", f"= **{fmt(p)} Pa**"],
@@ -249,7 +254,8 @@ def weight_on_moon(rng):
         (W_e / g_moon, "You divided by 1.6. Weight = mass × g, with g = 1.6 N/kg on the Moon."),
     ], unit="N")
     return dict(
-        stem=f"A rock has a weight of **{fmt(W_e)} N** on Earth, where g = 10 N/kg. On the Moon the gravitational field strength is **1.6 N/kg**. What is the weight of the rock on the Moon?",
+        stem=f"Fig. 1 shows a rock that has a weight of **{fmt(W_e)} N** on Earth, where g = 10 N/kg. On the Moon the gravitational field strength is **1.6 N/kg**. What is the weight of the rock on the Moon?",
+        figure=sketches.two_bodies_sketch(["g = 10 N/kg", f"weight of rock = {fmt(W_e)} N"], ["g = 1.6 N/kg", "weight of rock = ?"]),
         options=opts, key=key, misconceptions=mis,
         formula="m = W ÷ g (on Earth), then W = m × g (on the Moon); mass does not change",
         working=[f"mass = {fmt(W_e)} ÷ 10 = {fmt(m)} kg (the same on the Moon)", f"weight on Moon = {fmt(m)} × 1.6", f"= **{fmt(W_m)} N**"],
@@ -272,7 +278,8 @@ def density_of_mixture(rng):
         (rho1 + rho2, "You added the densities. Density of the mixture = total mass ÷ total volume."),
     ], unit="g/cm³")
     return dict(
-        stem=f"**{V1} cm³** of liquid X (density **{fmt(rho1)} g/cm³**) is mixed with **{V2} cm³** of liquid Y (density **{fmt(rho2)} g/cm³**). The liquids mix completely with no change in total volume. What is the density of the mixture?",
+        stem=f"Fig. 1 shows two liquids. **{V1} cm³** of liquid X (density **{fmt(rho1)} g/cm³**) is mixed with **{V2} cm³** of liquid Y (density **{fmt(rho2)} g/cm³**). The liquids mix completely with no change in total volume. What is the density of the mixture?",
+        figure=sketches.beakers_sketch([("X", f"{V1} cm³", f"{fmt(rho1)} g/cm³"), ("Y", f"{V2} cm³", f"{fmt(rho2)} g/cm³")]),
         options=opts, key=key, misconceptions=mis,
         formula="density of mixture = total mass ÷ total volume (mass = density × volume for each liquid)",
         working=[f"mass of X = {fmt(rho1)} × {V1} = {fmt(m1)} g; mass of Y = {fmt(rho2)} × {V2} = {fmt(m2)} g",

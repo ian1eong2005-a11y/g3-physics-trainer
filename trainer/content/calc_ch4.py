@@ -1,5 +1,5 @@
 """Chapter 4 Dynamics: F = ma, resultant force, friction, free-body situations."""
-from .. import figs
+from .. import figs, sketches
 from ..config import G
 from .base import fmt, nice, numeric_options, template
 
@@ -26,7 +26,8 @@ def force_from_ma(rng):
         (m + a, "You added. F = m × a."),
     ], unit="N")
     return dict(
-        stem=f"A trolley of mass **{fmt(m)} kg** accelerates at **{fmt(a)} m/s²**. What is the resultant force acting on the trolley?",
+        stem=f"Fig. 1 shows a trolley of mass **{fmt(m)} kg** on a smooth surface. A force F makes it accelerate at **{fmt(a)} m/s²**. What is the resultant force F acting on the trolley?",
+        figure=figs.force_diagram([("F = ?", "right", 2.0)], label_body=f"{fmt(m)} kg"),
         options=opts, key=key, misconceptions=mis,
         formula="resultant force = mass × acceleration (F = ma)",
         working=["F = ma", f"= {fmt(m)} × {fmt(a)}", f"= **{fmt(F)} N**"],
@@ -48,7 +49,8 @@ def acceleration_from_F_m(rng):
         (F - m, "You subtracted. Rearrange F = ma to get a = F ÷ m."),
     ], unit="m/s²")
     return dict(
-        stem=f"A resultant force of **{fmt(F)} N** acts on a box of mass **{fmt(m)} kg**. What is the acceleration of the box?",
+        stem=f"Fig. 1 shows a resultant force of **{fmt(F)} N** acting on a box of mass **{fmt(m)} kg** on a smooth floor. What is the acceleration of the box?",
+        figure=figs.force_diagram([(f"{fmt(F)} N", "right", 2.0)], label_body=f"{fmt(m)} kg"),
         options=opts, key=key, misconceptions=mis,
         formula="F = ma, rearranged: a = F ÷ m",
         working=["F = ma  →  a = F ÷ m", f"= {fmt(F)} ÷ {fmt(m)}", f"= **{fmt(a)} m/s²**"],
@@ -98,7 +100,8 @@ def force_from_change_in_velocity(rng):
         wrongs.append((m * v * t, "You multiplied by time instead of dividing. a = (v − u) ÷ t."))
     opts, key, mis = numeric_options(rng, F, wrongs, unit="N")
     return dict(
-        stem=f"A vehicle of mass **{fmt(m)} kg** speeds up uniformly from **{fmt(u)} m/s to {fmt(v)} m/s in {fmt(t)} s**. What is the resultant force on the vehicle?",
+        stem=f"Fig. 1 shows a vehicle of mass **{fmt(m)} kg** that speeds up uniformly from **{fmt(u)} m/s to {fmt(v)} m/s in {fmt(t)} s**. What is the resultant force on the vehicle?",
+        figure=sketches.motion_sketch(f"u = {fmt(u)} m/s", f"v = {fmt(v)} m/s", f"t = {fmt(t)} s", body_label=f"{fmt(m)} kg"),
         options=opts, key=key, misconceptions=mis,
         formula="a = (v − u) ÷ t, then F = ma",
         working=[f"a = ({fmt(v)} − {fmt(u)}) ÷ {fmt(t)} = {fmt(a)} m/s²", f"F = ma = {fmt(m)} × {fmt(a)}", f"= **{fmt(F)} N**"],
