@@ -8,6 +8,7 @@ import pytest
 from trainer.content import TEMPLATES, inventory
 from trainer.content.recall import RECALL
 from trainer.content.recall2 import RECALL2
+from trainer.content.recall3 import RECALL3
 
 PNG = b"\x89PNG\r\n\x1a\n"
 SEEDS = list(range(20))
@@ -19,9 +20,9 @@ def test_inventory():
     assert len(calc) >= 70
     levels = Counter(t.level for t in calc)
     assert set(levels) == {1, 2, 3, 4, 5} and min(levels.values()) >= 8
-    assert {t.chapter for t in calc} == {1, 2, 3, 4, 5, 6, 9, 10}
-    assert len(expl) == len(RECALL) + len(RECALL2) >= 50
-    assert {t.chapter for t in expl} == set(range(1, 11))
+    assert {t.chapter for t in calc} >= {1, 2, 3, 4, 5, 6, 9, 10}
+    assert len(expl) == len(RECALL) + len(RECALL2) + len(RECALL3) >= 50
+    assert {t.chapter for t in expl} >= set(range(1, 11))
     ids = [t.id for t in TEMPLATES]
     assert len(ids) == len(set(ids)), "duplicate template ids"
     inv = inventory()

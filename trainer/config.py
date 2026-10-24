@@ -21,6 +21,12 @@ CHAPTERS = {
     8: "Thermal Processes",
     9: "General Wave Properties",
     10: "Electromagnetic Spectrum",
+    11: "Light",
+    12: "Electric Charge and Current",
+    13: "D.C. Circuits",
+    14: "Practical Electricity",
+    15: "Magnetism and Electromagnetism",
+    16: "Radioactivity",
 }
 
 CATEGORIES = {

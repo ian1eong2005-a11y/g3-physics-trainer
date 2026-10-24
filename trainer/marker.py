@@ -121,7 +121,7 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
         return False
     negated_phrase = any(w in NEGATIONS for w in words)
     if negated_phrase and not ordered:
-        ordered, window = True, min(window, 4)        # 'not accurate' must read in order, close together
+        ordered, window = True, min(window, 6)        # 'not accurate', 'cannot be formed on a screen': in order, close together
     pos = [_positions(ans, w, exact) for w in words]
     if any(not p for p in pos):
         return False
