@@ -89,6 +89,7 @@ def _live(store):
             "Online": st.column_config.TextColumn("Online"),
             "Calc level": st.column_config.ProgressColumn("Calc level", min_value=0, max_value=MAX_LEVEL, format="L%d"),
             "Explain level": st.column_config.ProgressColumn("Explain level", min_value=0, max_value=MAX_LEVEL, format="L%d"),
+            "Written level": st.column_config.ProgressColumn("Written level", min_value=0, max_value=MAX_LEVEL, format="L%d"),
             "Accuracy %": st.column_config.NumberColumn("Accuracy %", format="%d%%"),
             "Last chapter": st.column_config.NumberColumn("Last ch"),
         },
@@ -98,8 +99,9 @@ def _live(store):
         dist = pd.DataFrame({
             "Calculation": [sum(r["Calc level"] == lv for r in shown) for lv in range(1, MAX_LEVEL + 1)],
             "Explanation": [sum(r["Explain level"] == lv for r in shown) for lv in range(1, MAX_LEVEL + 1)],
+            "Written": [sum(r["Written level"] == lv for r in shown) for lv in range(1, MAX_LEVEL + 1)],
         }, index=[f"L{lv}" for lv in range(1, MAX_LEVEL + 1)])
-        st.bar_chart(dist, color=["#1f5fa6", "#c77d12"])
+        st.bar_chart(dist, color=["#1f5fa6", "#c77d12", "#3b8f5a"])
 
     with st.expander("Student detail (last 20 attempts)"):
         names = {r["_key"]: f"{r['Name']} ({r['Class']})" for r in shown}

@@ -23,9 +23,17 @@ class Question:
     formula: Optional[str] = None
     figure: Optional[bytes] = None
     lo: str = ""
+    kind: str = "mcq"                       # mcq | written
+    points: Optional[list] = None           # written: marker.Point list
+    pitfalls: Optional[list] = None         # written: marker.Pitfall list
+    model_answer: Optional[str] = None
+    min_points: Optional[int] = None        # written: how many points pass (default all)
+    samples: Optional[tuple] = None         # written: (answers that must pass, answers that must fail) for the tests
 
     def shuffled(self, rng: random.Random) -> "Question":
         """Same question, options in a new order (used when a recall question is re-served)."""
+        if self.kind != "mcq":
+            return Question(**self.__dict__)
         items = list(self.options.items())
         rng.shuffle(items)
         new_opts, new_mis, new_key = {}, {}, None
@@ -62,6 +70,20 @@ def template(id: str, chapter: int, level: int, lo: str, category: str = "calc")
         TEMPLATES.append(Template(id=id, category=category, chapter=chapter, level=level, lo=lo, make=make))
         return make
     return deco
+
+
+def written(id: str, chapter: int, level: int, lo: str, stem: str, points, model_answer: str, hints, keywords: str,
+            pitfalls=(), min_points: Optional[int] = None, figure: Optional[Callable[[], bytes]] = None,
+            sample_pass=(), sample_fail=()):
+    """Register a written-answer question (fixed text; marked by trainer.marker)."""
+    def make(seed: int) -> Question:
+        return Question(template_id=id, category="written", chapter=chapter, level=level, seed=seed, lo=lo, stem=stem,
+                        options={}, key="", working=[f"**Model answer:** {model_answer}"], hints=list(hints), misconceptions={},
+                        formula=keywords, figure=figure() if figure else None, kind="written", points=list(points),
+                        pitfalls=list(pitfalls), model_answer=model_answer, min_points=min_points,
+                        samples=(list(sample_pass), list(sample_fail)))
+    TEMPLATES.append(Template(id=id, category="written", chapter=chapter, level=level, lo=lo, make=make))
+    return make
 
 
 # ------------------------------------------------------------------ numbers

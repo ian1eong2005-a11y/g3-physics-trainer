@@ -26,6 +26,15 @@ CHAPTERS = {
 CATEGORIES = {
     "calc": "Calculation",
     "explain": "Explanation",
+    "written": "Written answer",
+}
+
+WRITTEN_LEVEL_NAMES = {
+    1: "L1 - state or define in a phrase",
+    2: "L2 - state two facts or describe simply",
+    3: "L3 - explain with a reason",
+    4: "L4 - explain with a chain of reasoning",
+    5: "L5 - apply or evaluate in a new situation",
 }
 
 LEVEL_NAMES = {

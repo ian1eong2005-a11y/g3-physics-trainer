@@ -28,7 +28,10 @@ def test_inventory():
     assert ("calc", 5) in inv and ("explain", 8) in inv
 
 
-@pytest.mark.parametrize("tpl", TEMPLATES, ids=lambda t: t.id)
+MCQ = [t for t in TEMPLATES if t.category != "written"]
+
+
+@pytest.mark.parametrize("tpl", MCQ, ids=lambda t: t.id)
 def test_template_well_formed(tpl):
     for seed in SEEDS:
         q = tpl.make(seed)
@@ -54,7 +57,7 @@ def test_template_well_formed(tpl):
 
 
 def test_numbers_vary_between_seeds():
-    for tpl in TEMPLATES:
+    for tpl in MCQ:
         if tpl.category != "calc":
             continue
         stems = {tpl.make(s).stem for s in range(30)}
@@ -71,3 +74,36 @@ def test_recall_shuffle_keeps_answer_and_misconceptions():
         assert s.options[s.key] == q.options[q.key]
         assert sorted(s.options.values()) == sorted(q.options.values())
         assert {s.options[k]: v for k, v in s.misconceptions.items()} == {q.options[k]: v for k, v in q.misconceptions.items()}
+
+
+# ------------------------------------------------------------------ written answers
+from trainer.marker import mark  # noqa: E402
+
+WRITTEN = [t for t in TEMPLATES if t.category == "written"]
+
+
+def test_written_inventory():
+    assert len(WRITTEN) == 25
+    assert Counter(t.level for t in WRITTEN) == {1: 5, 2: 5, 3: 5, 4: 5, 5: 5}
+    assert {t.chapter for t in WRITTEN} == {8}
+
+
+@pytest.mark.parametrize("tpl", WRITTEN, ids=lambda t: t.id)
+def test_written_marking(tpl):
+    q = tpl.make(0)
+    assert q.kind == "written" and q.points and q.model_answer and q.formula and len(q.hints) == 3
+    if q.figure is not None:
+        assert "Fig. 1" in q.stem
+    else:
+        assert "Fig. 1" not in q.stem
+    r = mark(q.model_answer, q.points, q.pitfalls, q.min_points)
+    assert r.passed, f"{tpl.id}: model answer fails its own marking: missed {r.missed}, pitfalls {r.pitfalls}"
+    assert not mark("", q.points, q.pitfalls, q.min_points).passed
+    passes, fails = q.samples
+    assert passes and fails, f"{tpl.id}: give sample answers"
+    for a in passes:
+        r = mark(a, q.points, q.pitfalls, q.min_points)
+        assert r.passed, f"{tpl.id}: should PASS: {a!r} -> missed {r.missed}, pitfalls {r.pitfalls}"
+    for a in fails:
+        r = mark(a, q.points, q.pitfalls, q.min_points)
+        assert not r.passed, f"{tpl.id}: should FAIL: {a!r} -> hit {r.hit}"

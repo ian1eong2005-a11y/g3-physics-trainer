@@ -454,3 +454,34 @@ def rod_sketch(materials):
     ax.set_xlim(-0.2, 7.2)
     ax.set_ylim(-0.9, 3.0)
     return _png(fig)
+
+
+def flask_sketch():
+    """Cross-section of a vacuum flask: double glass wall, vacuum gap, silvered surfaces, stopper."""
+    fig, ax = _fig(3.4, 4.0)
+    ax.add_patch(Rectangle((0, 0), 3.0, 4.0, fc="#f4f4f4", ec="black", lw=1.6))
+    ax.add_patch(Rectangle((0.35, 0.3), 2.3, 3.4, fc="white", ec="black", lw=1.4))
+    ax.add_patch(Rectangle((0.65, 0.6), 1.7, 3.1, fc="#dfe8f3", ec="black", lw=1.4))
+    ax.add_patch(Rectangle((0.5, 3.7), 2.0, 0.5, fc="#bbbbbb", ec="black", lw=1.4))
+    ax.text(1.5, 3.95, "stopper", ha="center", va="center", fontsize=8)
+    ax.text(1.5, 2.1, "hot\nliquid", ha="center", va="center", fontsize=9)
+    ax.annotate("vacuum", (0.5, 1.6), xytext=(-1.6, 1.6), fontsize=9, ha="center", arrowprops=dict(arrowstyle="-|>", lw=1.0))
+    ax.annotate("silvered\nsurfaces", (0.65, 0.9), xytext=(-1.6, 0.6), fontsize=9, ha="center", arrowprops=dict(arrowstyle="-|>", lw=1.0))
+    ax.annotate("outer\ncase", (0.1, 3.0), xytext=(-1.6, 3.1), fontsize=9, ha="center", arrowprops=dict(arrowstyle="-|>", lw=1.0))
+    ax.set_xlim(-2.6, 3.4)
+    ax.set_ylim(-0.3, 4.5)
+    return _png(fig)
+
+
+def two_cups_sketch(left="dull black", right="shiny silver", note=None):
+    fig, ax = _fig(5.0, 2.6)
+    for x, fc, name in ((0.0, "#333333", left), (3.0, "#e6e6e6", right)):
+        ax.add_patch(Polygon([(x, 0), (x + 1.8, 0), (x + 1.6, 2.0), (x + 0.2, 2.0)], fc=fc, ec="black", lw=1.6))
+        for dx in (0.6, 0.9, 1.2):
+            ax.plot([x + dx, x + dx + 0.15], [2.15, 2.7], color="#777777", lw=1.0, ls="--")
+        ax.text(x + 0.9, -0.3, name, ha="center", va="top", fontsize=10)
+    if note:
+        ax.text(2.4, 3.0, note, ha="center", va="bottom", fontsize=9.5)
+    ax.set_xlim(-0.4, 5.2)
+    ax.set_ylim(-0.9, 3.5)
+    return _png(fig)

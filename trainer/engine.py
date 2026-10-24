@@ -58,8 +58,8 @@ def apply_retry(state: CatState, correct: bool) -> None:
 
 
 def repeat_until_correct(category: str, level: int) -> bool:
-    """Teacher rule: explanation recall questions (L1) come back until answered correctly."""
-    return category == "explain" and level == 1
+    """Teacher rule: explanation recall questions (L1, MCQ or written) come back until answered correctly."""
+    return category in ("explain", "written") and level == 1
 
 
 def levels_available(templates: Iterable, category: str) -> list:

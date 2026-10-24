@@ -114,3 +114,25 @@ def test_teacher_dashboard_lists_students(at):
     next(b for b in at.button if b.label == "Open dashboard").click(); at.run()
     assert at.session_state["teacher_ok"]
     assert not at.exception
+
+
+def test_written_answer_flow(at):
+    login(at, name="Ella Goh")
+    at.radio[0].set_value("written"); at.run()
+    q = current_question(at)
+    assert q.kind == "written" and q.chapter == 8 and q.level == 1
+    # a weak answer -> tutor opens with marking feedback
+    at.text_area[0].input("something about heat"); at.run()
+    next(b for b in at.button if b.label == "Submit answer").click(); at.run()
+    qs = at.session_state["qs"]
+    assert qs["phase"] == "hints" and "marking points" in qs["chat"][0][1]
+    next(b for b in at.button if b.key and b.key.startswith("retry_")).click(); at.run()
+    assert at.session_state["qs"]["phase"] == "retry"
+    # the model answer, paraphrased by the question's own sample, passes on retry (no streak credit)
+    at.text_area[0].input(q.samples[0][0]); at.run()
+    next(b for b in at.button if b.label == "Submit answer").click(); at.run()
+    assert at.session_state["qs"]["phase"] == "solved" and at.session_state["qs"]["retry_correct"]
+    from trainer.store import get_store
+    st_ = get_store().get(at.session_state["student_key"]).states["written"]
+    assert st_.attempted == 1 and st_.correct == 0 and st_.wrong_streak == 1
+    assert not at.exception

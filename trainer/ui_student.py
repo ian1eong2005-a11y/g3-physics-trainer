@@ -4,10 +4,13 @@ import time
 
 import streamlit as st
 
-from .config import CATEGORIES, CHAPTERS, DOWN_STREAK, EXPLAIN_LEVEL_NAMES, LEVEL_NAMES, UP_STREAK
+from .config import CATEGORIES, CHAPTERS, DOWN_STREAK, EXPLAIN_LEVEL_NAMES, LEVEL_NAMES, UP_STREAK, WRITTEN_LEVEL_NAMES
 from .content import TEMPLATES, chapters_with_content
 from .engine import apply_first_attempt, levels_available, repeat_until_correct, select_template
+from .marker import mark
 from .store import Attempt
+
+LEVEL_NAME_SETS = {"calc": LEVEL_NAMES, "explain": EXPLAIN_LEVEL_NAMES, "written": WRITTEN_LEVEL_NAMES}
 
 _rng = random.Random()
 
@@ -30,32 +33,53 @@ def _serve(store, rec, cat, chapters):
     return st.session_state["qs"]
 
 
-def _answer(store, rec, letter):
+def _written_feedback(result, first=True):
+    lead = "Not quite yet." if first else "Still not there."
+    parts = [f"{lead} You have **{result.score}** marking points so far."]
+    if result.too_short:
+        parts.append("Write a full sentence or two; a word or two is not enough here.")
+    if result.hit:
+        parts.append("✔ " + "; ".join(result.hit) + ".")
+    if result.missed:
+        n = len(result.missed)
+        parts.append(f"✘ {n} marking point{'s' if n > 1 else ''} still missing. Ask for a hint or the key words.")
+    for msg in result.pitfalls:
+        parts.append("⚠ " + msg)
+    return " ".join(parts)
+
+
+def _answer(store, rec, response):
+    """response: an option letter (MCQ) or the typed answer (written)."""
     qs = _qs()
     q, cat = qs["question"], qs["cat"]
     state = rec.states[cat]
-    correct = letter == q.key
-    if qs["phase"] == "answer":                                 # first attempt: the only one that counts
+    if q.kind == "written":
+        result = mark(response, q.points, q.pitfalls, q.min_points)
+        correct, chosen = result.passed, response.strip()[:80]
+        qs["mark"], qs["last_answer"] = result, response
+    else:
+        correct, chosen = response == q.key, response
+    first = qs["phase"] == "answer"
+    if first:                                                   # first attempt: the only one that counts
         qs["event"] = apply_first_attempt(state, correct)
-        store.log_attempt(rec.key, Attempt(time.time(), cat, q.template_id, q.chapter, qs["level"], letter, q.key, correct, False, 0))
-        if correct:
-            qs["phase"] = "solved"
-        else:
-            qs["wrong"].add(letter)
-            qs["phase"] = "hints"
-            qs["chat"] = [("tutor", f"Not quite. You chose **{letter}**. " + q.misconceptions.get(letter, "That value does not follow from the correct method."))]
+        store.log_attempt(rec.key, Attempt(time.time(), cat, q.template_id, q.chapter, qs["level"], chosen, q.key, correct, False, 0))
     else:                                                       # retry: no streak credit
-        store.log_attempt(rec.key, Attempt(time.time(), cat, q.template_id, q.chapter, qs["level"], letter, q.key, correct, True, qs["hints_used"]))
-        if correct:
-            qs["phase"] = "solved"
-            qs["retry_correct"] = True
+        store.log_attempt(rec.key, Attempt(time.time(), cat, q.template_id, q.chapter, qs["level"], chosen, q.key, correct, True, qs["hints_used"]))
+    if correct:
+        qs["phase"] = "solved"
+        qs["retry_correct"] = not first
+    else:
+        if q.kind == "written":
+            msg = _written_feedback(qs["mark"], first)
         else:
-            qs["wrong"].add(letter)
-            if repeat_until_correct(cat, qs["level"]):
-                qs["phase"] = "hints"
-                qs["chat"].append(("tutor", f"Still not it. You chose **{letter}**. " + q.misconceptions.get(letter, "Think again about the definition.")))
-            else:
-                qs["phase"] = "revealed"
+            qs["wrong"].add(response)
+            msg = (f"Not quite. You chose **{response}**. " if first else f"Still not it. You chose **{response}**. ") + \
+                q.misconceptions.get(response, "That value does not follow from the correct method.")
+        if first or repeat_until_correct(cat, qs["level"]):
+            qs["phase"] = "hints"
+            qs["chat"].append(("tutor", msg))
+        else:
+            qs["phase"] = "revealed"
     store.touch(rec.key)
 
 
@@ -106,7 +130,7 @@ def render_student(store, rec):
         ss.pop("qs", None)
 
     state = rec.states[cat]
-    names = LEVEL_NAMES if cat == "calc" else EXPLAIN_LEVEL_NAMES
+    names = LEVEL_NAME_SETS[cat]
     st.markdown(f"#### {CATEGORIES[cat]} · Level {state.level}")
     st.caption(names[state.level])
     st.markdown(_streak_strip(state), unsafe_allow_html=True)
@@ -129,16 +153,32 @@ def render_student(store, rec):
 
     phase = qs["phase"]
     answering = phase in ("answer", "retry")
-    for letter, text in q.options.items():
-        disabled = (not answering) or (letter in qs["wrong"])
-        label = f"**{letter}**&nbsp;&nbsp; {text}"
-        if phase in ("solved", "revealed") and letter == q.key:
-            label = f"✅ {label}"
-        elif letter in qs["wrong"]:
-            label = f"❌ {label}"
-        if st.button(label, key=f"opt_{letter}_{qs['serial']}", width="stretch", disabled=disabled):
-            _answer(store, rec, letter)
-            st.rerun()
+    if q.kind == "written":
+        if answering:
+            text = st.text_area("Your answer", value=qs.get("last_answer", "") if phase == "retry" else "", height=120,
+                                key=f"ans_{qs['serial']}", placeholder="Write one or two sentences in your own words.")
+            if st.button("Submit answer", type="primary", width="stretch", key=f"submit_{qs['serial']}"):
+                if text.strip():
+                    _answer(store, rec, text)
+                    st.rerun()
+                else:
+                    st.warning("Type an answer first.")
+        else:
+            st.markdown("**Your answer:** " + (qs.get("last_answer") or "").replace("\n", " "))
+            res = qs.get("mark")
+            if res is not None:
+                st.caption(f"Marking points: {res.score}" + (" · " + "; ".join(res.hit) if res.hit else ""))
+    else:
+        for letter, text in q.options.items():
+            disabled = (not answering) or (letter in qs["wrong"])
+            label = f"**{letter}**&nbsp;&nbsp; {text}"
+            if phase in ("solved", "revealed") and letter == q.key:
+                label = f"✅ {label}"
+            elif letter in qs["wrong"]:
+                label = f"❌ {label}"
+            if st.button(label, key=f"opt_{letter}_{qs['serial']}", width="stretch", disabled=disabled):
+                _answer(store, rec, letter)
+                st.rerun()
 
     # ---- banners
     if qs["event"] == "up":
@@ -151,8 +191,8 @@ def render_student(store, rec):
         if qs["retry_correct"]:
             st.info("Correct on the second try. Retries do not count towards your streak, so keep going.")
         else:
-            st.success("Correct!")
-        with st.expander("Show working"):
+            st.success("Correct!" if q.kind != "written" else f"Correct! {qs['mark'].score} marking points.")
+        with st.expander("Show working" if q.kind != "written" else "Model answer"):
             for line in q.working:
                 st.markdown(f"- {line}")
         if st.button("Next question ➜", type="primary", width="stretch", key=f"next_{qs['serial']}"):
@@ -160,8 +200,11 @@ def render_student(store, rec):
             st.rerun()
 
     elif phase == "revealed":
-        st.error(f"The correct answer is **{q.key}**: {q.options[q.key]}")
-        st.markdown("**Working**")
+        if q.kind == "written":
+            st.error("Not enough marking points this time. Compare your answer with the model answer below.")
+        else:
+            st.error(f"The correct answer is **{q.key}**: {q.options[q.key]}")
+        st.markdown("**Working**" if q.kind != "written" else "**Model answer**")
         for line in q.working:
             st.markdown(f"- {line}")
         if st.button("Next question ➜", type="primary", width="stretch", key=f"next_{qs['serial']}"):
@@ -172,7 +215,8 @@ def render_student(store, rec):
         _tutor_panel(store, rec, qs, q)
 
     elif phase == "retry":
-        st.info("Choose again." if not repeat_until_correct(cat, qs["level"]) else "Choose again. This question comes back until you get it right.")
+        verb = "Edit your answer and submit again." if q.kind == "written" else "Choose again."
+        st.info(verb if not repeat_until_correct(cat, qs["level"]) else verb + " This question comes back until you get it right.")
         with st.expander("Tutor chat"):
             for role, text in qs["chat"]:
                 with st.chat_message("assistant" if role == "tutor" else "user"):
@@ -195,16 +239,19 @@ def _tutor_panel(store, rec, qs, q):
             store.touch(rec.key)
             st.rerun()
     with c2:
-        if st.button("📐 Show formula", disabled=(not q.formula) or qs["formula_shown"], width="stretch", key=f"formula_{qs['serial']}"):
-            qs["chat"].append(("student", "What is the formula?"))
-            qs["chat"].append(("tutor", f"Use: **{q.formula}**. Now put the numbers from the question into it."))
+        is_written = q.kind == "written"
+        label = "🔑 Show key words" if is_written else "📐 Show formula"
+        if st.button(label, disabled=(not q.formula) or qs["formula_shown"], width="stretch", key=f"formula_{qs['serial']}"):
+            qs["chat"].append(("student", "What should I include?" if is_written else "What is the formula?"))
+            qs["chat"].append(("tutor", (f"Key ideas to include: **{q.formula}**. Put them into your own sentences." if is_written
+                                         else f"Use: **{q.formula}**. Now put the numbers from the question into it.")))
             qs["formula_shown"] = True
             qs["hints_used"] += 1
             store.touch(rec.key)
             st.rerun()
     with c3:
         if st.button("🔁 Try again", type="primary", width="stretch", key=f"retry_{qs['serial']}"):
-            if repeat_until_correct(qs["cat"], qs["level"]):
+            if repeat_until_correct(qs["cat"], qs["level"]) and q.kind == "mcq":
                 qs["question"] = q.shuffled(_rng)        # same question, new order
                 qs["wrong"] = set()
             qs["phase"] = "retry"
