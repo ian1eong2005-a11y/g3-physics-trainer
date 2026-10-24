@@ -259,4 +259,5 @@ def _tutor_panel(store, rec, qs, q):
             store.touch(rec.key)
             st.rerun()
     if n == 0:
-        st.caption("The tutor gives one hint at a time and never the answer. Ask for the formula if you are stuck on the first step.")
+        st.caption("The tutor gives one hint at a time and never the answer. Ask for the "
+                   + ("key words if you are not sure what to include." if q.kind == "written" else "formula if you are stuck on the first step."))
