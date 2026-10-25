@@ -516,3 +516,16 @@ def penetration_diagram():
     ax.set_xlim(0, 7.6)
     ax.set_ylim(-0.9, 2.9)
     return _png(fig)
+
+
+def rating_plate(lines, title="appliance"):
+    """A rating label as found on an appliance, e.g. ['230 V', '2000 W', '50 Hz']."""
+    fig, ax = _fig(3.6, 2.2)
+    ax.add_patch(Rectangle((0, 0), 4.0, 2.4, fc="#f7f7f7", ec="black", lw=1.6))
+    ax.text(2.0, 2.05, title, ha="center", va="center", fontsize=10, fontweight="bold")
+    ax.plot([0.2, 3.8], [1.8, 1.8], color="black", lw=0.8)
+    for i, t in enumerate(lines):
+        ax.text(2.0, 1.45 - i * 0.45, t, ha="center", va="center", fontsize=10.5)
+    ax.set_xlim(-0.2, 4.2)
+    ax.set_ylim(-0.2, 2.6)
+    return _png(fig)
