@@ -85,11 +85,25 @@ WRITTEN = [t for t in TEMPLATES if t.category == "written"]
 
 def test_written_inventory():
     chapters = {t.chapter for t in WRITTEN}
-    assert chapters >= {6, 7, 8}
+    assert chapters == set(range(1, 17))
     for ch in chapters:
         per_level = Counter(t.level for t in WRITTEN if t.chapter == ch)
-        assert set(per_level) == {1, 2, 3, 4, 5} and min(per_level.values()) >= 5, f"chapter {ch}: {dict(per_level)}"
+        assert set(per_level) == {1, 2, 3, 4, 5} and min(per_level.values()) >= 15, f"chapter {ch}: {dict(per_level)}"
         assert len(set(per_level.values())) == 1, f"chapter {ch}: levels should be balanced, got {dict(per_level)}"
+
+
+NO_CALC_CHAPTERS = {7, 8, 15}   # no calculation outcomes in the 5086 syllabus for these chapters
+
+
+def test_every_cell_has_at_least_three():
+    """Each chapter x level has >= 3 calculation questions (except chapters with no calculation outcomes) and >= 3 explanation MCQs."""
+    for cat in ("calc", "explain"):
+        cells = Counter((t.chapter, t.level) for t in TEMPLATES if t.category == cat)
+        for ch in range(1, 17):
+            if cat == "calc" and ch in NO_CALC_CHAPTERS:
+                continue
+            for lv in range(1, 6):
+                assert cells[(ch, lv)] >= 3, f"{cat}: chapter {ch} level {lv} has only {cells[(ch, lv)]}"
 
 
 def test_no_fill_in_the_blank_hints():
