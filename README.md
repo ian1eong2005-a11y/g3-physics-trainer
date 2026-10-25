@@ -19,6 +19,8 @@ Electromagnetism, Radioactivity). Streamlit app, no database.
   digits (R₁ = R1, 10⁶ = 10^6), hyphenated words split ("high-resistance"), and "into the page" never matches "out of the page". The student sees how many points they
   have, which ones, and any pitfall message; hints and key words come from the same tutor panel; one edit-and-resubmit retry.
 - **5 correct in a row → level up. 3 wrong in a row → level down.** Everyone starts at L1.
+- Questions are dealt like a shuffled deck: no question comes back until the student has seen every question in that pool
+  (chapter, level, category); after that only the least recently seen half can come up, never the one just answered.
 - A wrong answer opens the scripted **tutor**: a message about the chosen option, up to 3 hints, the formula on request, then one retry
   (correct retries never count towards the streak). Explanation L1 questions come back until answered correctly.
 - **Teacher dashboard** (sidebar → Teacher, or `?teacher=1`): who is online, levels, streaks, accuracy, last 20 attempts,
