@@ -495,8 +495,9 @@ def decay_curve(n0, half_life, t_max=None, unit="min", marks=None):
     ts = np.linspace(0, t_max, 200)
     ns = n0 * 0.5 ** (ts / half_life)
     pts = list(zip(ts, ns))
-    xstep = next(s for s in (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000) if t_max / s <= 8)
-    ystep = next(s for s in (10, 20, 50, 100, 200, 500, 1000, 2000, 5000) if n0 / s <= 8)
+    steps = [m * 10 ** k for k in range(0, 7) for m in (1, 2, 5)]
+    xstep = next(s for s in steps if t_max / s <= 8)
+    ystep = next(s for s in steps if s >= 10 and n0 / s <= 8)
     xmax = (int(t_max / xstep) + (1 if t_max % xstep else 0)) * xstep
     ymax = (int(n0 / ystep) + (1 if n0 % ystep else 0)) * ystep
     return graph(pts, xmax, ymax, xstep, ystep, xlabel=f"time / {unit}", ylabel="count rate / counts per min" if n0 < 2000 else "number of undecayed nuclei", labels=marks)
