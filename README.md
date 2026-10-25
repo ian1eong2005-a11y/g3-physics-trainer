@@ -8,13 +8,15 @@ Electromagnetism, Radioactivity). Streamlit app, no database.
 ## How it works
 
 - Students log in with **name + class** (no password). Teacher view is password protected.
-- Three categories: **Calculation** (134 parametrised templates, L1–L5, numbers change every time, every one with a diagram or data
-  table drawn to match), **Explanation** (101 recall / identify / apply MCQs at L1–L3, many with diagrams) and **Written answer**
-  (400 questions: 25 per chapter for all 16 chapters, 5 per level). Chapters 7, 8 and 15 are descriptive in the syllabus, so they
-  appear under Explanation and Written answer only.
+- Three categories: **Calculation** (411 parametrised templates, L1–L5, numbers change every time, every one with a diagram or data
+  table drawn to match), **Explanation** (417 recall / identify / apply / evaluate MCQs at L1–L5, many with diagrams) and **Written
+  answer** (1200 questions: 75 per chapter for all 16 chapters, 15 per level). Every chapter and level has at least 3 calculation and
+  3 explanation questions (tested). Chapters 7, 8 and 15 have no calculation outcomes in the syllabus, so they appear under
+  Explanation and Written answer only.
 - **Written answers are marked by meaning, not word for word** (`trainer/marker.py`, no LLM): each question has marking points with
   many alternative phrasings; words match after light stemming with one spelling slip allowed, phrase words may appear in any order
-  within a short window, and common wrong ideas ("cold flows in") are caught as pitfalls. The student sees how many points they
+  within a short window, and common wrong ideas ("cold flows in") are caught as pitfalls. Superscript and subscript digits read as
+  digits (R₁ = R1, 10⁶ = 10^6), hyphenated words split ("high-resistance"), and "into the page" never matches "out of the page". The student sees how many points they
   have, which ones, and any pitfall message; hints and key words come from the same tutor panel; one edit-and-resubmit retry.
 - **5 correct in a row → level up. 3 wrong in a row → level down.** Everyone starts at L1.
 - A wrong answer opens the scripted **tutor**: a message about the chosen option, up to 3 hints, the formula on request, then one retry
@@ -78,7 +80,7 @@ trainer/figs.py             instrument and graph drawers (micrometer, vernier, s
 trainer/sketches.py         scene sketches (motion, journeys, beams, slopes, lifts, waves, echo, wavefronts, EM spectrum, particles, thermal)
 trainer/sketches2.py        Ch 11–16 drawers (reflection/refraction/lens rays, circuits, V–I graphs, plugs, magnetic fields, LHR, motor coil, atoms, decay curves, penetration)
 trainer/marker.py           meaning-based marker for written answers (marking points, synonyms, spelling tolerance, pitfalls)
-trainer/content/            question templates (base helpers, calc_ch1..6, calc_ch9..14, calc_ch16, recall, recall2, recall3, written_ch1..16)
+trainer/content/            question templates (base helpers, calc_ch*, calc_ch*_more, calc_ch*_x, explain_ch*, explain_x_*, recall*, written_ch1..16, written_ch*_b)
 trainer/ui_student.py       student screen + tutor panel
 trainer/ui_teacher.py       live dashboard
 tests/                      pytest
