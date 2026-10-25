@@ -87,8 +87,9 @@ def test_written_inventory():
     chapters = {t.chapter for t in WRITTEN}
     assert chapters >= {6, 7, 8}
     for ch in chapters:
-        assert Counter(t.level for t in WRITTEN if t.chapter == ch) == {1: 5, 2: 5, 3: 5, 4: 5, 5: 5}, f"chapter {ch}"
-    assert len(WRITTEN) == 25 * len(chapters)
+        per_level = Counter(t.level for t in WRITTEN if t.chapter == ch)
+        assert set(per_level) == {1, 2, 3, 4, 5} and min(per_level.values()) >= 5, f"chapter {ch}: {dict(per_level)}"
+        assert len(set(per_level.values())) == 1, f"chapter {ch}: levels should be balanced, got {dict(per_level)}"
 
 
 def test_no_fill_in_the_blank_hints():

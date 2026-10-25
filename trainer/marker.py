@@ -17,6 +17,8 @@ STOP = set("the a an of to and is are in on at by it its this that as be from wi
 
 NEGATIONS = {"not", "never", "no", "cannot", "without", "isn", "aren", "doesn", "don", "wasn", "weren", "won", "nor", "neither"}
 
+SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻", "0123456789-")
+
 WINDOW = 9          # max token span for the words of one phrase (order-free)
 PITFALL_WINDOW = 4  # tight, ordered
 
@@ -70,7 +72,7 @@ def tokens(text: str) -> List[str]:
     ('÷' and a digit-digit '/' -> '/', '×' and 'x' between numbers -> '*', '−' -> '-'), so 'm/s' and 'm/s²' differ and
     '12 × 4' does not match '12 ÷ 4'."""
     text = text.lower().replace("'", " ").replace("’", " ")
-    text = text.replace("²", "2").replace("³", "3").replace("⁻", "-").replace("^", "")   # m/s^2 -> m/s2
+    text = text.translate(SUPERSCRIPTS).replace("^", "")   # m/s^2 -> m/s2, 10⁷ and 10^7 -> 107, 10⁻³ -> 10-3
     text = text.replace("÷", " / ").replace("×", " * ").replace("−", " - ").replace("=", " = ")
     text = re.sub(r"(?<=\d)\s*/\s*(?=\d)", " / ", text)          # 12/4 -> 12 / 4   (m/s stays one token)
     text = re.sub(r"(?<=\d)\s*x\s*(?=\d)", " * ", text)          # 12x4, 12 x 4 -> 12 * 4
