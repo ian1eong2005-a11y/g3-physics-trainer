@@ -79,6 +79,7 @@ def tokens(text: str) -> List[str]:
     text = text.replace("÷", " / ").replace("×", " * ").replace("−", " - ").replace("=", " = ")
     text = re.sub(r"(?<=\d)\s*/\s*(?=\d)", " / ", text)          # 12/4 -> 12 / 4   (m/s stays one token)
     text = re.sub(r"(?<=\d)\s*x\s*(?=\d)", " * ", text)          # 12x4, 12 x 4 -> 12 * 4
+    text = text.replace("λ", " lambda ")                         # wavelength symbol
     text = text.replace("ohms", "ω").replace("ohm", "ω")        # '2 ohm' and '2 Ω' read the same, and differ from '2 A'
     text = re.sub(r"[;,:!?]", " ¦ ", text)                       # clause boundaries
     text = re.sub(r"\.(?=\s|$)", " ¦ ", text)                    # full stops (not decimal points)
