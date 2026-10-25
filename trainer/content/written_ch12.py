@@ -83,7 +83,7 @@ written("w12_conventional_vs_electron", 12, 2, "12d",
         keywords="conventional: + to −; electrons: − to +",
         figure=lambda: sk.circuit(series=[("lamp", None)], emf="+  −"),
         sample_pass=["Conventional current goes from positive to negative but electrons flow from negative to positive", "the electrons move the opposite way to conventional current, from the negative terminal to the positive"],
-        sample_fail=["They are the same thing", "Electrons flow from positive to negative"])
+        sample_fail=["They are the same thing", "Electrons flow from positive to negative"], min_points=1)
 
 written("w12_define_pd", 12, 2, "12g",
         stem="Define the potential difference across a component in a circuit.",

@@ -80,7 +80,9 @@ def tokens(text: str) -> List[str]:
     text = re.sub(r"(?<=\d)\s*/\s*(?=\d)", " / ", text)          # 12/4 -> 12 / 4   (m/s stays one token)
     text = re.sub(r"(?<=\d)\s*x\s*(?=\d)", " * ", text)          # 12x4, 12 x 4 -> 12 * 4
     text = text.replace("ohms", "ω").replace("ohm", "ω")        # '2 ohm' and '2 Ω' read the same, and differ from '2 A'
-    text = re.sub(r"[^a-z0-9°/\-*=.ω]+", " ", text)
+    text = re.sub(r"[;,:!?]", " ¦ ", text)                       # clause boundaries
+    text = re.sub(r"\.(?=\s|$)", " ¦ ", text)                    # full stops (not decimal points)
+    text = re.sub(r"[^a-z0-9°/\-*=.ω¦]+", " ", text)
     out = []
     for t in text.split():
         t = t.strip(".")
@@ -136,7 +138,13 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
 
     def negated_before(i):
         # a positive phrase does not count when the answer negates it: 'not precise', 'is never destroyed'
-        return (not negated_phrase) and any(t in NEGATIONS for t in ans[max(0, i - 2): i])
+        # (a negation in an earlier clause does not count: '...does not change; potential energy rises')
+        if negated_phrase:
+            return False
+        before = ans[max(0, i - 2): i]
+        if "¦" in before:
+            before = before[before.index("¦") + 1:] if before[-1] != "¦" else []
+        return any(t in NEGATIONS for t in before)
 
     if len(words) == 1:
         return any(not negated_before(i) for i in pos[0])
@@ -156,6 +164,8 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
                 # a positive phrase that the answer negates ("energy is NOT destroyed") does not count;
                 # a phrase that is itself negative ("no net transfer") is matched as written
                 span = ans[max(0, start - 2): cur + 1]
+                if "¦" in span[:2]:
+                    span = span[span.index("¦") + 1:]
                 if negated_phrase or not any(t in NEGATIONS for t in span):
                     return True
         else:

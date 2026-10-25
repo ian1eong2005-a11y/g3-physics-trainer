@@ -152,7 +152,7 @@ Q("w5b_push_near_hinge", 2, "5a", "Explain why it is hard to open a door by push
 
 Q("w5b_bottle_opener", 2, "5a", "Explain how a bottle opener makes it easy to remove a tight bottle cap.",
   [P("the bottle opener is a lever: the effort is applied at the end of a long handle, far from the pivot", ["lever", "long handle", "far from the pivot", "large distance"]),
-   P("the cap is a short distance from the pivot, so a small effort produces a large force on the cap", ["short distance", "small effort", "large force", "bigger force", "close to the pivot"])],
+   P("the cap is a short distance from the pivot, so a small effort produces a large force on the cap", ["short distance", "small effort", "small push", "large force", "bigger force", "big force", "close to the pivot"])],
   "The bottle opener is a lever. The effort is applied at the end of a long handle, far from the pivot, while the cap is a short distance from the pivot. The moments balance, so a small effort produces a large force on the cap.",
   ["Where is the pivot?", "Compare the distances of the effort and the cap from the pivot.", "Use the principle of moments."],
   "lever; effort far, load near → small effort, large force",
