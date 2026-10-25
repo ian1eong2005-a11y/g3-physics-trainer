@@ -18,7 +18,7 @@ STOP = set("the a an of to and is are in on at by it its this that as be from wi
 
 NEGATIONS = {"not", "never", "no", "cannot", "without", "isn", "aren", "doesn", "don", "wasn", "weren", "won", "nor", "neither"}
 
-SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻", "0123456789-")
+SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻₀₁₂₃₄₅₆₇₈₉", "0123456789-0123456789")   # also subscripts: R₁ -> r1
 
 WINDOW = 9          # max token span for the words of one phrase (order-free)
 PITFALL_WINDOW = 4  # tight, ordered
