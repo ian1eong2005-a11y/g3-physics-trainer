@@ -21,7 +21,7 @@ def test_inventory():
     levels = Counter(t.level for t in calc)
     assert set(levels) == {1, 2, 3, 4, 5} and min(levels.values()) >= 8
     assert {t.chapter for t in calc} >= {1, 2, 3, 4, 5, 6, 9, 10}
-    assert len(expl) == len(RECALL) + len(RECALL2) + len(RECALL3) >= 50
+    assert len(expl) >= len(RECALL) + len(RECALL2) + len(RECALL3) >= 50
     assert {t.chapter for t in expl} >= set(range(1, 11))
     ids = [t.id for t in TEMPLATES]
     assert len(ids) == len(set(ids)), "duplicate template ids"

@@ -431,6 +431,10 @@ def flemings_lhr(field="right", current="into", force=None):
         ax.plot([0], [0], "o", color="black", markersize=5)
     ax.text(0.45, -0.1, "current " + ("into page" if current == "into" else "out of page"), ha="left", va="center", fontsize=8.5)
     if force:
+        # F = I L x B with x to the right, y up, z out of the page: field right + current out of page -> force up
+        expected = "up" if (field == "right") == (current == "out") else "down"
+        if force != expected:
+            raise ValueError(f"flemings_lhr: field {field}, current {current} gives a force {expected}, not {force}")
         d = {"up": (0, 1), "down": (0, -1)}[force]
         _arrow(ax, (0, 0.35 * d[1]), (0, 1.3 * d[1]), lw=2.0, ms=14)
         ax.text(0.3, 0.72 * d[1], "force", ha="left", va="center", fontsize=9.5, bbox=dict(boxstyle="round,pad=0.1", fc="white", ec="none"))

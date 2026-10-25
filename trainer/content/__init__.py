@@ -1,5 +1,11 @@
 """Question content registry. Importing the chapter modules registers their templates."""
-from . import calc_ch1, calc_ch2, calc_ch3, calc_ch4, calc_ch5, calc_ch6, calc_ch9, calc_ch10, calc_ch11, calc_ch12, calc_ch13, calc_ch14, calc_ch16, recall, recall2, recall3, written_ch1, written_ch2, written_ch3, written_ch4, written_ch5, written_ch6, written_ch7, written_ch8, written_ch9, written_ch10, written_ch11, written_ch12, written_ch13, written_ch14, written_ch15, written_ch16  # noqa: F401
+import importlib
+import pkgutil
+
+# every module in this package except base registers questions on import (calc_ch*, explain_ch*, recall*, written_ch*)
+for _name in sorted(m.name for m in pkgutil.iter_modules(__path__)):
+    if _name != "base":
+        importlib.import_module(f"{__name__}.{_name}")
 from .base import TEMPLATES, Question, Template
 
 

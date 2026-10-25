@@ -300,21 +300,27 @@ def wave_graph(amplitude, period_or_lambda, kind="distance", cycles=2.0, mark=No
     return buf.getvalue()
 
 
-def echo_sketch(d_label, t_label, left="student", right="wall"):
+def echo_sketch(d_label, t_label, left="student", right="wall", wave="sound", back="echo", person=True):
+    """Source on the left, reflector/target on the right. person=False draws a transmitter box; back=None: one-way signal."""
     fig, ax = _fig(6.0, 2.6)
     ax.plot([-0.3, 6.6], [0, 0], color="black", lw=1.4)
-    ax.add_patch(Circle((0.3, 1.55), 0.22, fc="white", ec="black", lw=1.4))
-    ax.plot([0.3, 0.3], [1.33, 0.6], color="black", lw=1.4)
-    ax.plot([0.3, 0.0], [0.6, 0.0], color="black", lw=1.4)
-    ax.plot([0.3, 0.6], [0.6, 0.0], color="black", lw=1.4)
-    ax.plot([0.3, 0.65], [1.15, 0.85], color="black", lw=1.4)
+    if person:
+        ax.add_patch(Circle((0.3, 1.55), 0.22, fc="white", ec="black", lw=1.4))
+        ax.plot([0.3, 0.3], [1.33, 0.6], color="black", lw=1.4)
+        ax.plot([0.3, 0.0], [0.6, 0.0], color="black", lw=1.4)
+        ax.plot([0.3, 0.6], [0.6, 0.0], color="black", lw=1.4)
+        ax.plot([0.3, 0.65], [1.15, 0.85], color="black", lw=1.4)
+    else:
+        ax.add_patch(Rectangle((0.0, 0.0), 0.7, 1.1, fc="white", ec="black", lw=1.6))
+        ax.add_patch(Polygon([(0.7, 0.75), (1.0, 1.05), (1.0, 0.45)], fc="#cccccc", ec="black", lw=1.2))
     ax.text(0.3, -0.25, left, ha="center", va="top", fontsize=9.5)
     ax.add_patch(Rectangle((6.0, 0), 0.5, 2.2, fc="#cccccc", ec="black", lw=1.6))
     ax.text(6.25, 2.3, right, ha="center", va="bottom", fontsize=9.5)
     ax.add_patch(FancyArrowPatch((1.1, 1.5), (5.8, 1.5), arrowstyle="-|>", mutation_scale=13, lw=1.4, color="black", connectionstyle="arc3,rad=-0.15"))
-    ax.add_patch(FancyArrowPatch((5.8, 1.0), (1.1, 1.0), arrowstyle="-|>", mutation_scale=13, lw=1.4, color="black", connectionstyle="arc3,rad=-0.15"))
-    ax.text(3.45, 2.05, "sound", ha="center", va="bottom", fontsize=9.5)
-    ax.text(3.45, 0.55, "echo", ha="center", va="top", fontsize=9.5)
+    if back:
+        ax.add_patch(FancyArrowPatch((5.8, 1.0), (1.1, 1.0), arrowstyle="-|>", mutation_scale=13, lw=1.4, color="black", connectionstyle="arc3,rad=-0.15"))
+        ax.text(3.45, 0.55, back, ha="center", va="top", fontsize=9.5)
+    ax.text(3.45, 2.05, wave, ha="center", va="bottom", fontsize=9.5)
     ax.add_patch(FancyArrowPatch((0.3, -0.8), (6.0, -0.8), arrowstyle="<|-|>", mutation_scale=11, lw=1.1, color="black"))
     ax.text(3.15, -0.95, d_label, ha="center", va="top", fontsize=10.5)
     ax.text(3.15, 2.95, t_label, ha="center", va="top", fontsize=10.5)
