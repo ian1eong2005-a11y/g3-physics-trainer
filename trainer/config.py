@@ -63,7 +63,7 @@ UP_STREAK = 5          # correct in a row at a level -> level + 1
 DOWN_STREAK = 3        # wrong in a row at a level -> level - 1
 MIN_LEVEL, MAX_LEVEL = 1, 5
 START_LEVEL = 1
-RECENT_AVOID = 10      # do not repeat any of the last N template ids
+HISTORY_LEN = 1000     # served template ids remembered per category; a question comes back only after its whole pool has been seen
 
 ONLINE_SECONDS = 120   # "online" on the dashboard if active within this many seconds
 DASHBOARD_REFRESH_S = 5
