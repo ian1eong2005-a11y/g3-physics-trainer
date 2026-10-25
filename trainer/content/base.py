@@ -165,6 +165,14 @@ def text_options(rng: random.Random, correct: str, wrongs: Dict[str, str]):
     return options, key, misconceptions
 
 
+def calc_q(rng: random.Random, stem: str, answer: float, wrongs, unit: str, formula: str, working, hints, figure=None,
+           sf: Optional[int] = 3, dp: Optional[int] = None):
+    """Build the dict a calculation template returns: numeric options with misconception messages, plus the rest."""
+    opts, key, mis = numeric_options(rng, answer, wrongs, unit=unit, sf=sf, dp=dp)
+    return dict(stem=stem, figure=figure, options=opts, key=key, misconceptions=mis, formula=formula,
+                working=list(working), hints=list(hints))
+
+
 def nice(rng: random.Random, *choices):
     return rng.choice(choices)
 
