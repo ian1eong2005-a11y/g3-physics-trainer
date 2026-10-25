@@ -122,6 +122,8 @@ def phrase_match(ans: List[str], phrase: str, ordered: bool = False, window: int
     words = tokens(phrase) if exact else [w for w in tokens(phrase) if w not in STOP]   # pitfalls keep every word ('more dense')
     if not words:
         return False
+    if exact:
+        window = max(window, len(words))           # a long pitfall phrase may span its own length (one extra word allowed), in order
     negated_phrase = any(w in NEGATIONS for w in words)
     if negated_phrase and not ordered:
         ordered, window = True, min(window, 6)        # 'not accurate', 'cannot be formed on a screen': in order, close together
