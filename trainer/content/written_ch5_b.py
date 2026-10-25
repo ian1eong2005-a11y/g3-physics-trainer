@@ -506,4 +506,4 @@ Q("w5b_bottle_quarter_full", 5, "5e", "A plastic bottle a quarter full of water 
   "quarter full → low CG → more stable",
   ["The quarter-full bottle has a low centre of gravity because the water is at the bottom, so it must tilt further before the weight acts outside the base", "the full bottle has a higher cg so it topples more easily"],
   ["The full bottle is more stable because it is heavier", "They are equally stable"], min_points=1,
-  pitfalls=[PF(["full bottle is more stable", "heavier so more stable", "equally stable"], "Stability depends on the HEIGHT of the centre of gravity, not just the weight.")])
+  pitfalls=[PF(["completely full bottle is more stable", "more stable because it is heavier", "heavier so more stable", "equally stable"], "Stability depends on the HEIGHT of the centre of gravity, not just the weight.")])

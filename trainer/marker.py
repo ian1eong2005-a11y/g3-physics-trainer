@@ -83,6 +83,7 @@ def tokens(text: str) -> List[str]:
     text = text.replace("ohms", "ω").replace("ohm", "ω")        # '2 ohm' and '2 Ω' read the same, and differ from '2 A'
     text = re.sub(r"[;,:!?]", " ¦ ", text)                       # clause boundaries
     text = re.sub(r"\.(?=\s|$)", " ¦ ", text)                    # full stops (not decimal points)
+    text = re.sub(r"(?<=[a-z])(?<!non)-(?=[a-z])", " ", text)  # "high-resistance" reads as "high resistance"; "non-contact" stays one word
     text = re.sub(r"[^a-z0-9°/\-*=.ω¦]+", " ", text)
     out = []
     for t in text.split():
