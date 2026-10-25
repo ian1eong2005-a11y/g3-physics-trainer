@@ -48,3 +48,12 @@ def test_physics_near_homographs_are_kept_apart():
     assert phrase_match(tokens("conducton"), "conduction")
     assert not phrase_match(tokens("less dense"), "denser", exact=True)
     assert not phrase_match(tokens("the emitter"), "omitted")
+
+
+def test_symbols_hyphens_and_directions():
+    # subscripts read as digits, hyphenated words split (but non- words stay whole), into != out of
+    assert phrase_match(tokens("1/R = 1/R₁ + 1/R₂"), "1/r = 1/r1 + 1/r2")
+    assert phrase_match(tokens("the high-resistance element"), "high resistance")
+    assert tokens("non-magnetic") == ["non-magnetic"]
+    assert not phrase_match(tokens("out of the page"), "into the page")
+    assert phrase_match(tokens("current flows into the page"), "into the page")

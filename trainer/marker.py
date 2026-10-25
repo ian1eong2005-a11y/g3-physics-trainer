@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 from typing import List, Optional, Sequence
 
-STOP = set("the a an of to and is are in on at by it its this that as be from with for into than so which who what there their "
+STOP = set("the a an of to and is are in on at by it its this that as be from with for than so which who what there their "
            "they them then will would can could has have had was were been being do does did also very "
            "you your my his her our".split())
 # 'more', 'less', 'not', 'no' are deliberately NOT stop words: comparatives and negations carry physics meaning.
