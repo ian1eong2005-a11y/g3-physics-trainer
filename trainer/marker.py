@@ -12,7 +12,8 @@ from difflib import SequenceMatcher
 from typing import List, Optional, Sequence
 
 STOP = set("the a an of to and is are in on at by it its this that as be from with for into than so which who what there their "
-           "they them then will would can could has have had was were been being do does did also very".split())
+           "they them then will would can could has have had was were been being do does did also very "
+           "you your my his her our".split())
 # 'more', 'less', 'not', 'no' are deliberately NOT stop words: comparatives and negations carry physics meaning.
 
 NEGATIONS = {"not", "never", "no", "cannot", "without", "isn", "aren", "doesn", "don", "wasn", "weren", "won", "nor", "neither"}
@@ -73,6 +74,8 @@ def tokens(text: str) -> List[str]:
     '12 × 4' does not match '12 ÷ 4'."""
     text = text.lower().replace("'", " ").replace("’", " ")
     text = text.translate(SUPERSCRIPTS).replace("^", "")   # m/s^2 -> m/s2, 10⁷ and 10^7 -> 107, 10⁻³ -> 10-3
+    text = re.sub(r"\b(c\.\s?g\.?|cg|c of g)(?![a-z])", " centre of gravity ", text)   # common abbreviation
+    text = re.sub(r"\bcent(er|re)s?\b", "centre", text)
     text = text.replace("÷", " / ").replace("×", " * ").replace("−", " - ").replace("=", " = ")
     text = re.sub(r"(?<=\d)\s*/\s*(?=\d)", " / ", text)          # 12/4 -> 12 / 4   (m/s stays one token)
     text = re.sub(r"(?<=\d)\s*x\s*(?=\d)", " * ", text)          # 12x4, 12 x 4 -> 12 * 4
