@@ -102,6 +102,7 @@ class LiveStore:
             out = []
             for rec in self.students.values():
                 calc, expl, wr = rec.states["calc"], rec.states["explain"], rec.states.get("written", CatState())
+                olv = rec.states.get("olevel", CatState())
                 first = [a for a in rec.attempts if not a.retry]
                 online = rec.online(now)
                 out.append({
@@ -117,6 +118,8 @@ class LiveStore:
                     "Explain streak": f"{expl.correct_streak} right / {expl.wrong_streak} wrong",
                     "Written level": wr.level,
                     "Written streak": f"{wr.correct_streak} right / {wr.wrong_streak} wrong",
+                    "O-Level level": olv.level,
+                    "O-Level streak": f"{olv.correct_streak} right / {olv.wrong_streak} wrong",
                     "Attempted": len(first),
                     "Accuracy %": round(100 * sum(a.correct for a in first) / len(first)) if first else None,
                     "Hints used": sum(a.hints_used for a in rec.attempts),

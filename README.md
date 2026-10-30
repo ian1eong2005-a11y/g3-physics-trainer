@@ -8,11 +8,16 @@ Electromagnetism, Radioactivity). Streamlit app, no database.
 ## How it works
 
 - Students log in with **name + class** (no password). Teacher view is password protected.
-- Three categories: **Calculation** (411 parametrised templates, L1–L5, numbers change every time, every one with a diagram or data
+- Four categories: **Calculation** (411 parametrised templates, L1–L5, numbers change every time, every one with a diagram or data
   table drawn to match), **Explanation** (417 recall / identify / apply / evaluate MCQs at L1–L5, many with diagrams) and **Written
   answer** (1200 questions: 75 per chapter for all 16 chapters, 15 per level). Every chapter and level has at least 3 calculation and
   3 explanation questions (tested). Chapters 7, 8 and 15 have no calculation outcomes in the syllabus, so they appear under
   Explanation and Written answer only.
+- **O level 2026 MCQ practice** (98 MCQs, L1–L5, added 30 Oct 2026): SEAB O-Level MCQs from 2014–2021 and the 2024 specimen paper on the
+  learning outcomes that the 2026 O-Level Paper 2 (Q1–7) did **not** test, **adapted** (same context and skill, numbers changed and
+  re-drawn diagrams; calculation items give new numbers on every serve). Each worked answer names the SEAB question it came from.
+  Covers Ch 1–4 and 6–16 (Ch 5's outcomes were all tested). Magnet and current directions in its diagrams are computed
+  (`trainer/sketches3.py`), so a figure cannot contradict its key. `tests/test_olevel.py` checks that no item uses an outcome the 2026 paper tested.
 - **Written answers are marked by meaning, not word for word** (`trainer/marker.py`, no LLM): each question has marking points with
   many alternative phrasings; words match after light stemming with one spelling slip allowed, phrase words may appear in any order
   within a short window, and common wrong ideas ("cold flows in") are caught as pitfalls. Superscript and subscript digits read as

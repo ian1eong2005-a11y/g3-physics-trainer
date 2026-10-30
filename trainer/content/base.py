@@ -89,18 +89,20 @@ def written(id: str, chapter: int, level: int, lo: str, stem: str, points, model
     return make
 
 
-def explain_mcqs(items):
-    """Register fixed-text explanation MCQs. Each item: id, chapter, level, lo, stem, correct, wrongs {text: why wrong} (3),
-    hints (3), optional figure (callable returning PNG bytes; the stem must then say 'Fig. 1')."""
+def explain_mcqs(items, category: str = "explain"):
+    """Register fixed-text MCQs (explanation by default). Each item: id, chapter, level, lo, stem, correct, wrongs {text: why wrong} (3),
+    hints (3), optional figure (callable returning PNG bytes; the stem must then say 'Fig. 1'), optional why, optional source
+    (shown under the working, e.g. 'SEAB O-Level 2016 MCQ 9')."""
     for item in items:
         def make(rng, item=item):
             opts, key, mis = text_options(rng, item["correct"], item["wrongs"])
             fig = item.get("figure")
             hints = [h if "___" not in h else "Rule out the options that contradict what you know, then choose the one that matches exactly." for h in item["hints"]]
             return dict(stem=item["stem"], options=opts, key=key, misconceptions=mis, hints=hints,
-                        working=[f"Correct answer: **{item['correct']}**"] + ([item["why"]] if item.get("why") else []),
+                        working=[f"Correct answer: **{item['correct']}**"] + ([item["why"]] if item.get("why") else [])
+                        + ([f"_Adapted from {item['source']}._"] if item.get("source") else []),
                         formula=None, figure=fig() if fig else None)
-        template(item["id"], chapter=item["chapter"], level=item["level"], lo=item["lo"], category="explain")(make)
+        template(item["id"], chapter=item["chapter"], level=item["level"], lo=item["lo"], category=category)(make)
 
 
 # ------------------------------------------------------------------ numbers

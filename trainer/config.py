@@ -33,6 +33,7 @@ CATEGORIES = {
     "calc": "Calculation",
     "explain": "Explanation",
     "written": "Written answer",
+    "olevel": "O level 2026 MCQ practice",
 }
 
 WRITTEN_LEVEL_NAMES = {
@@ -56,6 +57,14 @@ EXPLAIN_LEVEL_NAMES = {
     3: "L3 - apply a concept",
     4: "L4 - explain with reasoning",
     5: "L5 - evaluate",
+}
+
+OLEVEL_LEVEL_NAMES = {
+    1: "L1 - recall a definition or fact (SEAB style)",
+    2: "L2 - one step: a formula or a rule",
+    3: "L3 - read a diagram or graph, or two steps",
+    4: "L4 - several steps or unfamiliar context",
+    5: "L5 - hardest past-year MCQs",
 }
 
 # Adaptive rules (confirmed by the teacher, 24 Oct 2026)

@@ -136,3 +136,17 @@ def test_written_answer_flow(at):
     st_ = get_store().get(at.session_state["student_key"]).states["written"]
     assert st_.attempted == 1 and st_.correct == 0 and st_.wrong_streak == 1
     assert not at.exception
+
+
+def test_olevel_category_flow(at):
+    login(at, name="Faye Koh")
+    at.radio[0].set_value("olevel"); at.run()
+    assert not at.exception
+    q = current_question(at)
+    assert q.category == "olevel" and q.level == 1
+    click_option(at, q.key)
+    assert any("Correct!" in s.value for s in at.success)
+    assert any("Adapted from SEAB" in m.value for m in at.markdown)
+    from trainer.store import get_store
+    row = next(r for r in get_store().rows() if r["Name"] == "Faye Koh")
+    assert row["O-Level level"] == 1 and row["O-Level streak"].startswith("1 right")

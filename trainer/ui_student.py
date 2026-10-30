@@ -4,13 +4,13 @@ import time
 
 import streamlit as st
 
-from .config import CATEGORIES, CHAPTERS, DOWN_STREAK, EXPLAIN_LEVEL_NAMES, LEVEL_NAMES, UP_STREAK, WRITTEN_LEVEL_NAMES
+from .config import CATEGORIES, CHAPTERS, DOWN_STREAK, EXPLAIN_LEVEL_NAMES, LEVEL_NAMES, OLEVEL_LEVEL_NAMES, UP_STREAK, WRITTEN_LEVEL_NAMES
 from .content import TEMPLATES, chapters_with_content
 from .engine import apply_first_attempt, levels_available, repeat_until_correct, select_template
 from .marker import mark
 from .store import Attempt
 
-LEVEL_NAME_SETS = {"calc": LEVEL_NAMES, "explain": EXPLAIN_LEVEL_NAMES, "written": WRITTEN_LEVEL_NAMES}
+LEVEL_NAME_SETS = {"calc": LEVEL_NAMES, "explain": EXPLAIN_LEVEL_NAMES, "written": WRITTEN_LEVEL_NAMES, "olevel": OLEVEL_LEVEL_NAMES}
 
 _rng = random.Random()
 
@@ -121,8 +121,12 @@ def render_student(store, rec):
                                   format_func=lambda c: f"Ch {c} {CHAPTERS[c]}", key=f"chapters_ms_{cat}")
         missing = [c for c in CHAPTERS if c not in available]
         if missing:
-            st.caption("No " + CATEGORIES[cat].lower() + " questions for: " + ", ".join(f"Ch {c}" for c in missing)
-                       + (". Chapters 7 and 8 are descriptive in the syllabus; try them under Explanation." if cat == "calc" else "."))
+            if cat == "olevel":
+                st.caption("No questions for " + ", ".join(f"Ch {c}" for c in missing)
+                           + ": the 2026 O-Level Paper 2 already tested every outcome there. This set covers the outcomes it did not test.")
+            else:
+                st.caption("No " + CATEGORIES[cat].lower() + " questions for: " + ", ".join(f"Ch {c}" for c in missing)
+                           + (". Chapters 7 and 8 are descriptive in the syllabus; try them under Explanation." if cat == "calc" else "."))
     if not chapters:
         chapters = available
     if chapters != ss.get("chapters"):
