@@ -6,7 +6,7 @@ SCHOOL = "Queenstown Secondary School"
 # Login dropdown, grouped by level. Add Sec 4 classes here when known.
 CLASSES = {
     "Sec 3": ["3SG2", "3SG3", "3SG4", "3SG8"],
-    "Sec 4": ["4SG4"],
+    "Sec 4": ["4SG1", "4SG2", "4SG3", "4SG4"],
 }
 CLASS_LIST = [c for group in CLASSES.values() for c in group]
 
