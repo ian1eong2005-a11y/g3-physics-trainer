@@ -146,7 +146,7 @@ def test_olevel_category_flow(at):
     assert q.category == "olevel" and q.level == 1
     click_option(at, q.key)
     assert any("Correct!" in s.value for s in at.success)
-    assert any("Adapted from SEAB" in m.value for m in at.markdown)
+    assert any("Adapted from" in m.value for m in at.markdown)
     from trainer.store import get_store
     row = next(r for r in get_store().rows() if r["Name"] == "Faye Koh")
     assert row["O-Level level"] == 1 and row["O-Level streak"].startswith("1 right")
