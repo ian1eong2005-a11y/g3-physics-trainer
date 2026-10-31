@@ -7,6 +7,7 @@ SCHOOL = "Queenstown Secondary School"
 CLASSES = {
     "Sec 3": ["3SG2", "3SG3", "3SG4", "3SG8"],
     "Sec 4": ["4SG1", "4SG2", "4SG3", "4SG4"],
+    "Sec 5": ["5AS"],
 }
 CLASS_LIST = [c for group in CLASSES.values() for c in group]
 
