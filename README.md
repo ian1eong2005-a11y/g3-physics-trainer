@@ -13,11 +13,15 @@ Electromagnetism, Radioactivity). Streamlit app, no database.
   answer** (1200 questions: 75 per chapter for all 16 chapters, 15 per level). Every chapter and level has at least 3 calculation and
   3 explanation questions (tested). Chapters 7, 8 and 15 have no calculation outcomes in the syllabus, so they appear under
   Explanation and Written answer only.
-- **O level 2026 MCQ practice** (98 MCQs, L1–L5, added 30 Oct 2026): SEAB O-Level MCQs from 2014–2021 and the 2024 specimen paper on the
-  learning outcomes that the 2026 O-Level Paper 2 (Q1–7) did **not** test, **adapted** (same context and skill, numbers changed and
-  re-drawn diagrams; calculation items give new numbers on every serve). Each worked answer names the SEAB question it came from.
-  Covers Ch 1–4 and 6–16 (Ch 5's outcomes were all tested). Magnet and current directions in its diagrams are computed
-  (`trainer/sketches3.py`), so a figure cannot contradict its key. `tests/test_olevel.py` checks that no item uses an outcome the 2026 paper tested.
+- **O level 2026 MCQ practice** (194 MCQs, L1–L5; rebuilt 31 Oct 2026): every 5086 learning outcome (all 112) has a question.
+  **Every SEAB Ten-Year-Series physics MCQ in the 5086 syllabus is in** (5076 Paper 1 2014–2021 and the 5086 specimen paper, 154 items);
+  the 11 that test dropped 5076 content (evaporation, electric field lines, critical angle, adding vectors, a.c. demagnetising) are
+  listed as left out. Outcomes with no SEAB MCQ use questions adapted from schools' 2024 prelim papers (40 items). All are **adapted**
+  (same context and skill, numbers changed, diagrams redrawn; calculation items vary their numbers on every serve), and each worked
+  answer names its source. Questions on outcomes the 2026 O-Level Paper 2 did not test show a **"NOT in P2 2026"** badge (or
+  "... only in either/or Q10/Q11"), worked out from the LO using the P2 2026 TOS (`P2_2026_*` in `trainer/config.py`); students can
+  tick "Only questions NOT in P2 2026". Coverage report: `OLEVEL_MCQ_COVERAGE.md` (`python tools/olevel_coverage.py`).
+  `tests/test_olevel.py` fails if an in-syllabus TYS question or an LO is missing, or a note disagrees with the TOS.
 - **Written answers are marked by meaning, not word for word** (`trainer/marker.py`, no LLM): each question has marking points with
   many alternative phrasings; words match after light stemming with one spelling slip allowed, phrase words may appear in any order
   within a short window, and common wrong ideas ("cold flows in") are caught as pitfalls. Superscript and subscript digits read as

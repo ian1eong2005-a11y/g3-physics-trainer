@@ -59,6 +59,28 @@ EXPLAIN_LEVEL_NAMES = {
     5: "L5 - evaluate",
 }
 
+# 2026 O-Level 5086 Paper 2: learning outcomes it did NOT test (from "Output documents/2026 O-Level 5086 P2 Table of
+# Specifications.xlsx", sheet "LOs not tested"). 14c counts as tested (kW h unit in Q1).
+P2_2026_NOT_TESTED = {
+    "1a", "1c", "1d", "1f", "2a", "2d", "2e", "2f", "2g", "2h", "2i", "3b", "3c", "3d", "3e", "3f", "3g", "3h", "4d", "5a", "5c",
+    "6d", "6e", "7a", "7d", "8a", "9b", "9g", "9h", "9i", "11a", "11b", "11f", "11g", "11h", "12a", "12b", "12e", "12f", "12h",
+    "13e", "14a", "14d", "14g", "14h", "14i", "15a", "15c", "15e", "15g", "15h", "15i", "16f", "16h",
+}
+P2_2026_Q10_ONLY = {"6c", "7b", "7c", "7e", "8b", "8c", "8d", "8e"}             # tested only in the either/or Q10
+P2_2026_Q11_ONLY = {"9e", "9f", "10a", "10b", "10c", "10d", "11c", "11d", "11e"}  # tested only in the either/or Q11
+
+
+def p2_2026_note(lo: str):
+    """Note shown on an O-level practice question, worked out from its learning outcome; None if Paper 2 tested it."""
+    if lo in P2_2026_NOT_TESTED:
+        return "NOT in P2 2026"
+    if lo in P2_2026_Q10_ONLY:
+        return "NOT in P2 2026 Section A (only in either/or Q10)"
+    if lo in P2_2026_Q11_ONLY:
+        return "NOT in P2 2026 Section A (only in either/or Q11)"
+    return None
+
+
 OLEVEL_LEVEL_NAMES = {
     1: "L1 - recall a definition or fact (SEAB style)",
     2: "L2 - one step: a formula or a rule",
